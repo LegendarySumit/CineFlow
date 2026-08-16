@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineFlow — Crisis Director</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --green: #10b981;
+            --blue: #3b82f6;
+            --light: #f8fafc;
+            --muted: #94a3b8;
+        }
+        
+        body {
+            font-family: monospace;
+            background: var(--bg);
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        header {
+            border-bottom: 2px solid #334155;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1 { color: var(--blue); letter-spacing: 3px; font-size: 2rem; }
+        h2 { color: var(--blue); font-size: 1.5rem; margin: 1rem 0; }
+        
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+        }
+        
+        .btn-primary { background: var(--red); color: white; }
+        .btn-secondary { background: #334155; color: var(--light); }
+        .btn-success { background: var(--green); color: white; }
+        
+        .card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #334155;
+        }
+        
+        .stat { font-size: 2rem; color: var(--blue); font-weight: bold; }
+        .label { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; }
+        
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--red);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+        }
+        
+        .alert h3 { color: var(--red); }
+        
+        .step {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+        
+        .step-num {
+            width: 40px;
+            height: 40px;
+            background: var(--blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .step.done .step-num { background: var(--green); }
+        .step.active .step-num { background: var(--amber); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        
+        .step-content { flex: 1; }
+        .step-title { font-weight: bold; color: var(--light); }
+        .step-detail { color: var(--muted); font-size: 0.9rem; }
+        
+        .progress {
+            background: #334155;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: var(--green);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .recommendation {
+            background: var(--card);
+            border-left: 4px solid var(--green);
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .recommendation h3 { color: var(--green); margin-bottom: 1rem; }
+        
+        .reason { padding: 0.5rem 0; }
+        .reason:before { content: "✓ "; color: var(--green); font-weight: bold; margin-right: 0.5rem; }
+        
+        .evidence {
+            background: rgba(59, 130, 246, 0.05);
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-left: 3px solid var(--blue);
+            border-radius: 4px;
+        }
+        
+        .evidence-title { font-weight: bold; color: var(--light); }
+        .evidence-url { color: var(--blue); font-size: 0.9rem; }
+        
+        .nav {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .nav button {
+            background: #334155;
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav button.active {
+            background: var(--red);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav">
+        <button class="nav-btn active" onclick="switchScreen('dash')">📊 Dashboard</button>
+        <button class="nav-btn" onclick="switchScreen('crisis')">🚨 Crisis</button>
+        <button class="nav-btn" onclick="switchScreen('investigation')">🔍 Investigation</button>
+        <button class="nav-btn" onclick="switchScreen('decision')">✓ Decision</button>
+    </div>
+
+    <!-- Screen 1: Dashboard -->
+    <div class="screen active" id="dash">
+        <header>
+            <h1>🎬 CINEFLOW</h1>
+            <p>Production Crisis Director • Project Aurora • Day 7</p>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+            <div class="card">
+                <div class="label">Scenes Today</div>
+                <div class="stat">5</div>
+            </div>
+            <div class="card">
+                <div class="label">At Risk</div>
+                <div class="stat" style="color: var(--red);">1</div>
+            </div>
+            <div class="card">
+                <div class="label">Cast Conflicts</div>
+                <div class="stat">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Location Issues</div>
+                <div class="stat" style="color: var(--amber);">1</div>
+            </div>
+        </div>
+
+        <div class="alert">
+            <h3>⚠️ ACTIVE CRISIS</h3>
+            <p><strong>Scene 42:</strong> Reunion at High Tide</p>
+            <p><strong>Location:</strong> Puri Beach</p>
+            <p><strong>Risk:</strong> Weather disruption forecast for Aug 25, 2026</p>
+            <button class="btn btn-primary" onclick="switchScreen('crisis')">Analyze Crisis →</button>
+        </div>
+    </div>
+
+    <!-- Screen 2: Crisis Detection -->
+    <div class="screen" id="crisis">
+        <header>
+            <h1>🚨 CRISIS DETECTED</h1>
+        </header>
+
+        <div class="card" style="border: 2px solid var(--red); text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+            <h2 style="color: var(--red);">Scene 42 at Risk</h2>
+            <p style="color: var(--muted); margin: 1rem 0;">Puri Beach • Tomorrow 07:00</p>
+        </div>
+
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <div class="label">Scene ID</div>
+                    <p style="font-size: 1.3rem;">SC_42</p>
+                </div>
+                <div>
+                    <div class="label">Location</div>
+                    <p style="font-size: 1.3rem;">Puri Beach</p>
+                </div>
+                <div>
+                    <div class="label">Risk Level</div>
+                    <p style="font-size: 1.3rem; color: var(--red);">HIGH</p>
+                </div>
+                <div>
+                    <div class="label">Affected Actors</div>
+                    <p style="font-size: 1.3rem;">2</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="switchScreen('investigation')">Start Investigation →</button>
+    </div>
+
+    <!-- Screen 3: Investigation -->
+    <div class="screen" id="investigation">
+        <header>
+            <h1>🔍 INVESTIGATION IN PROGRESS</h1>
+        </header>
+
+        <div style="margin-bottom: 2rem;">
+            <div class="label">Progress</div>
+            <div class="progress">
+                <div class="progress-fill" style="width: 80%;"></div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Loaded Production Schedule</div>
+                <div class="step-detail">Identified Scene 42 (Reunion at High Tide)</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Identified External Dependencies</div>
+                <div class="step-detail">Weather-dependent outdoor shoot at Puri Beach</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Searching External Conditions</div>
+                <div class="step-detail">Parallel MCP: Puri weather forecast for Aug 25, 2026</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Found 4 Relevant Sources</div>
+                <div class="step-detail">Monsoon alerts, maritime advisories, weather forecasts</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Evaluated Production Impact</div>
+                <div class="step-detail">Affects: 2 actors, drone equipment, outdoor lighting</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Generated Recovery Candidates</div>
+                <div class="step-detail">3 scene swaps evaluated with constraint scoring</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Validated Constraints</div>
+                <div class="step-detail">Cast availability, location access, equipment</div>
+            </div>
+        </div>
+
+        <div class="step done">
+            <div class="step-num">✓</div>
+            <div class="step-content">
+                <div class="step-title">Synthesizing Recommendation</div>
+                <div class="step-detail">Analysis complete</div>
+            </div>
+        </div>
+
+        <div id="reasoningTrail" style="background: var(--card); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+            <h3 style="color: var(--blue); margin-bottom: 1rem;">Agent Reasoning Trail</h3>
+            <div id="trailContent" style="font-size: 0.9rem; color: var(--muted);">
+                <p>Reasoning trail
+
+        <button class="btn btn-primary" onclick="switchScreen('decision')">View Decision →</button>
+    </div>
+
+    <!-- Screen 4: Decision -->
+    <div class="screen" id="decision">
+        <header>
+            <h1>✓ RECOVERY DECISION</h1>
+        </header>
+
+        <div class="recommendation">
+            <h3>RECOMMENDED PLAN</h3>
+            <p style="font-size: 1.2rem; margin: 1rem 0;"><strong>Move Scene 42 → Day 9</strong></p>
+            <div style="margin-top: 1rem;">
+                <div class="label">Recovery Score</div>
+                <p style="font-size: 1.5rem; color: var(--green);">0 (Best)</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="color: var(--green); margin-bottom: 1rem;">Why This Plan?</h3>
+            <div class="reason">Existing cast availability (Arjun + Maya both free on Day 9)</div>
+            <div class="reason">Location access maintained (Puri Beach sunny forecast)</div>
+            <div class="reason">Equipment available (drone kit ready)</div>
+            <div class="reason">Minimal schedule disruption (2-day push)</div>
+            <div class="reason">Reduces external weather risk</div>
+        </div>
+
+        <div class="card">
+            <h3 style="color: var(--blue); margin-bottom: 1rem;">📄 EVIDENCE SOURCES</h3>
+            
+            <div class="evidence">
+                <div class="evidence-title">Puri Extended Forecast with high and low temperatures</div>
+                <div class="evidence-url">timeanddate.com/weather/india/puri</div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Aug 25: 89°F, Passing showers, 75% humidity - HIGH risk for outdoor shoot</p>
+            </div>
+
+            <div class="evidence">
+                <div class="evidence-title">Puri, India 10-Day Weather Forecast</div>
+                <div class="evidence-url">wunderground.com/forecast/in/puri</div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Coastal weather: Monsoon activity, variable visibility - AVOID outdoor location</p>
+            </div>
+
+            <div class="evidence">
+                <div class="evidence-title">East India and Northeast India in August</div>
+                <div class="evidence-url">indiasomeday.com/weather-in-india-in-august</div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Odisha sees heavy rainfall in August - expect delays and equipment challenges</p>
+            </div>
+
+            <div class="evidence">
+                <div class="evidence-title">Weather in Puri in August: Temperature & Rainfall</div>
+                <div class="evidence-url">weather-and-climate.com/puri-orissa</div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">13 rainy days expected, 359mm rainfall - HIGH operational risk</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button class="btn btn-success">✓ Approve Recovery Plan</button>
+            <button class="btn btn-secondary">📥 Download Full Report</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

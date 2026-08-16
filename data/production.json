@@ -1,0 +1,12 @@
+{
+  "production_id": "proj_aurora_01",
+  "name": "Project Aurora",
+  "production_type": "Feature Film",
+  "current_day": 7,
+  "total_days": 15,
+  "start_date": "2026-08-19",
+  "current_date": "2026-08-25",
+  "status": "IN_PROGRESS",
+  "director": "Ananya Sharma",
+  "line_producer": "Schmidt"
+}

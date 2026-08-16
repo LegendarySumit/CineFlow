@@ -1,0 +1,41 @@
+[
+  {
+    "actor_id": "act_01",
+    "name": "Arjun Kapoor",
+    "role": "Lead (Rohan)",
+    "daily_rate_usd": 1500,
+    "availability": {
+      "2026-08-25": true,
+      "2026-08-26": true,
+      "2026-08-27": true,
+      "2026-08-28": true,
+      "2026-08-29": false
+    }
+  },
+  {
+    "actor_id": "act_02",
+    "name": "Maya Sen",
+    "role": "Lead (Ira)",
+    "daily_rate_usd": 1500,
+    "availability": {
+      "2026-08-25": true,
+      "2026-08-26": true,
+      "2026-08-27": true,
+      "2026-08-28": true,
+      "2026-08-29": true
+    }
+  },
+  {
+    "actor_id": "act_03",
+    "name": "Vikram Rao",
+    "role": "Supporting (Inspector Khan)",
+    "daily_rate_usd": 800,
+    "availability": {
+      "2026-08-25": false,
+      "2026-08-26": true,
+      "2026-08-27": true,
+      "2026-08-28": false,
+      "2026-08-29": true
+    }
+  }
+]

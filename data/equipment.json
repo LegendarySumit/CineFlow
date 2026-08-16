@@ -1,0 +1,32 @@
+[
+  {
+    "equipment_id": "eq_01",
+    "name": "ARRI Alexa Mini Camera Package",
+    "category": "Camera",
+    "status": "AVAILABLE"
+  },
+  {
+    "equipment_id": "eq_02",
+    "name": "DJI Inspire 3 Drone Kit",
+    "category": "Aerial",
+    "status": "AVAILABLE"
+  },
+  {
+    "equipment_id": "eq_03",
+    "name": "Heavy Outdoor Lighting Rig",
+    "category": "Lighting",
+    "status": "AVAILABLE"
+  },
+  {
+    "equipment_id": "eq_04",
+    "name": "Studio Grid LED Lighting Kit",
+    "category": "Lighting",
+    "status": "AVAILABLE"
+  },
+  {
+    "equipment_id": "eq_05",
+    "name": "Wireless Audio Sound Package",
+    "category": "Audio",
+    "status": "AVAILABLE"
+  }
+]
