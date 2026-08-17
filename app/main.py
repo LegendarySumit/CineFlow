@@ -16,13 +16,13 @@ import sys
 import traceback
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.agents.supervisor import SupervisorAgent
 from app.services.audit_logger import (
@@ -58,14 +58,29 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS - Restrict origins for security
+# Mount static files
+# Setup static files directory
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+os.makedirs(static_dir, exist_ok=True)
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/", include_in_schema=False)
+def serve_ui():
+    """Serve the main UI page (index.html)"""
+    index_path = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "CineFlow API Ready. UI at http://localhost:8000"}
+
+# CORS - Allow UI access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
         "http://localhost:8000",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:8000"
+        "http://127.0.0.1:8000",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
@@ -729,21 +744,7 @@ def health_check():
         ]
     }
 
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-os.makedirs(static_dir, exist_ok=True)
 
-@app.get("/")
-def serve_ui():
-    """Serve 4-screen dashboard UI"""
-    ui_path = os.path.join(static_dir, "ui.html")
-    if os.path.exists(ui_path):
-        return FileResponse(ui_path)
-    
-    index_path = os.path.join(static_dir, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    
-    return {"message": "CineFlow API Running. UI at /static/ui.html"}
 
 try:
     app.mount("/static", StaticFiles(directory=static_dir), name="static")

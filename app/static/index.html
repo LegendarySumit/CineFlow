@@ -1,277 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineFlow — Production Crisis Director</title>
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent-red: #ef4444;
-            --accent-amber: #f59e0b;
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            letter-spacing: 4px;
-            margin: 0;
-            color: var(--accent-blue);
-        }
-
-        .header p {
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-            font-size: 0.9rem;
-        }
-
-        .status-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 1.5rem;
-            border-left: 4px solid var(--accent-amber);
-            margin-bottom: 1.5rem;
-        }
-
-        .status-badge {
-            display: inline-block;
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-
-        .btn-analyze {
-            background: var(--accent-red);
-            color: white;
-            border: none;
-            padding: 0.85rem 1.5rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1rem;
-            transition: opacity 0.2s;
-        }
-
-        .btn-analyze:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-
-        .btn-analyze:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .results-panel {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 1.5rem;
-            display: none;
-            border: 1px solid #334155;
-        }
-
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            color: var(--accent-amber);
-            font-weight: bold;
-            line-height: 1.8;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: inherit;
-            line-height: 1.6;
-            background: #0f172a;
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-
-        .action-bar {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-action:hover {
-            opacity: 0.9;
-        }
-
-        .btn-approve { background: var(--accent-green); color: white; }
-        .btn-evidence { background: #334155; color: var(--text-light); }
-
-        .error-message {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-top: 1rem;
-            display: none;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineFlow | Production Crisis Director</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/css/style.css" />
 </head>
-<body>
+<body class="bg-[#0D0B18] text-slate-100 font-sans antialiased h-screen flex overflow-hidden">
 
-<div class="container">
-    <div class="header">
-        <h1>🎬 CINEFLOW</h1>
-        <p>Production Crisis Director Engine</p>
-    </div>
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-72 bg-[#141024] border-r border-violet-900/30 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col p-4 gap-4 overflow-hidden">
+            <!-- Brand Header -->
+            <div class="flex items-center gap-3 px-2 py-3">
+                <div class="p-2.5 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-violet-900/50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-white tracking-tight">CineFlow</h1>
+                    <p class="text-xs text-violet-400/70 font-mono">Crisis Director</p>
+                </div>
+            </div>
 
-    <div class="status-card">
-        <h2 style="margin:0;">PROJECT AURORA</h2>
-        <p style="color: var(--text-muted); margin: 0.25rem 0 1rem 0;">Production Day 7 — August 25, 2026</p>
-        <span class="status-badge">⚠️ 1 ACTIVE DISRUPTION DETECTED</span>
-        <p style="margin-top: 0.75rem; font-size: 0.95rem;">
-            Location: <strong>Puri Beach</strong> | Scene: <strong>sc_42 (Reunion at High Tide)</strong>
-        </p>
-        
-        <button class="btn-analyze" id="analyzeBtn" onclick="runCrisisAnalysis()">
-            ⚡ ANALYZE PRODUCTION CRISIS
-        </button>
-    </div>
-
-    <div class="loading-spinner" id="spinner">
-        📡 Searching live web via Parallel Search...<br>
-        ⚙️ Evaluating schedule constraint graph...<br>
-        🤖 Gemini/Groq agent synthesizing recommendation...
-    </div>
-
-    <div class="error-message" id="errorMessage"></div>
-
-    <div class="results-panel" id="resultsPanel">
-        <h3 style="margin-top:0; color: var(--accent-amber);">PRODUCTION CRISIS ANALYSIS REPORT</h3>
-        <pre id="analysisText"></pre>
-
-        <div class="action-bar">
-            <button class="btn-action btn-evidence" onclick="showEvidence()">
-                📄 View Evidence
+            <!-- New Crisis Button -->
+            <button onclick="createNewSession()" class="flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:from-violet-700 active:to-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-violet-900/40 transition-all duration-200">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>New Session</span>
             </button>
-            <button class="btn-action btn-approve" onclick="approveRecoveryPlan()">
-                ✓ Approve Recovery Plan
-            </button>
+
+            <!-- Search -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+                <input id="session-search" type="text" placeholder="Search sessions..." class="w-full bg-[#1C1733] border border-violet-900/40 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50" />
+            </div>
+
+            <!-- Sessions List -->
+            <div class="flex-1 overflow-hidden flex flex-col">
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2 py-2">History</span>
+                <div id="session-history-list" class="flex-1 overflow-y-auto pr-2 space-y-1.5">
+                    <!-- Sessions loaded dynamically -->
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<script>
-    async function runCrisisAnalysis() {
-        const btn = document.getElementById('analyzeBtn');
-        const spinner = document.getElementById('spinner');
-        const resultsPanel = document.getElementById('resultsPanel');
-        const errorMessage = document.getElementById('errorMessage');
-        const analysisText = document.getElementById('analysisText');
+        <!-- Production Context Footer -->
+        <div class="p-4 border-t border-violet-900/30 bg-[#100D1F] space-y-3">
+            <div class="text-xs space-y-1">
+                <p class="font-semibold text-slate-200">Project Aurora</p>
+                <p class="text-slate-400 text-[11px]">Day 7 • Aug 25, 2026</p>
+            </div>
+            <div class="flex items-center justify-between text-[10px]">
+                <span class="text-slate-500">Session ID</span>
+                <span id="session-id-display" class="font-mono text-violet-400 bg-violet-950/40 px-2 py-0.5 rounded">#init</span>
+            </div>
+        </div>
+    </aside>
 
-        btn.disabled = true;
-        btn.innerText = "Analyzing Disruption...";
-        spinner.style.display = "block";
-        resultsPanel.style.display = "none";
-        errorMessage.style.display = "none";
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full bg-[#0D0B18] relative overflow-hidden">
 
-        try {
-            const response = await fetch('/api/analyze-crisis', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    prompt: "We are shooting Scene 42 on Puri Beach on August 25, 2026. Check for weather warnings in Puri on that date, analyze the impact on our production, and give me the best recovery plan.",
-                    scene_id: "sc_42"
-                })
-            });
+        <!-- Top Status Bar -->
+        <header class="h-12 border-b border-violet-900/30 flex items-center justify-between px-6 bg-[#0D0B18]/80 backdrop-blur-sm flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <i data-lucide="bot" class="w-4 h-4 text-violet-400"></i>
+                <span class="text-sm font-semibold text-slate-200">CineFlow Executive Assistant</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+                <div class="flex items-center gap-1.5 px-3 py-1.5 bg-violet-950/50 border border-violet-800/40 rounded-lg font-mono">
+                    <i data-lucide="trending-up" class="w-3 h-3 text-amber-400"></i>
+                    <span class="text-slate-400">Budget:</span>
+                    <span class="text-amber-400 font-semibold">₹12.5Cr</span>
+                </div>
+            </div>
+        </header>
 
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
-            }
+        <!-- Chat Thread (Scrollable) -->
+        <div id="chat-thread" class="flex-1 overflow-y-auto p-6 space-y-6 max-w-5xl mx-auto w-full">
+            <!-- Welcome Card -->
+            <div class="bg-[#161224] border border-violet-900/40 rounded-2xl p-6 shadow-lg space-y-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-violet-600/20 rounded-lg">
+                        <i data-lucide="zap" class="w-5 h-5 text-violet-400"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-white text-base">Ready to Analyze Crises</h2>
+                        <p class="text-xs text-slate-400">Select scene, describe crisis, execute analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            const data = await response.json();
-            spinner.style.display = "none";
-            resultsPanel.style.display = "block";
-            analysisText.innerText = data.analysis || "No analysis returned";
-        } catch (err) {
-            spinner.style.display = "none";
-            errorMessage.style.display = "block";
-            errorMessage.innerText = "❌ Error: " + err.message + ". Make sure FastAPI server is running on port 8000.";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "⚡ RE-ANALYZE PRODUCTION CRISIS";
-        }
-    }
+        <!-- Bottom Input Dock (Floating) -->
+        <div class="p-6 max-w-5xl mx-auto w-full flex-shrink-0">
+            <div class="bg-[#161224] border border-violet-800/40 rounded-2xl p-4 shadow-2xl backdrop-blur-xl space-y-4">
 
-    function showEvidence() {
-        alert(
-            "PARALLEL SEARCH VERIFIED SOURCES:\n\n" +
-            "1. IMD Coastal Weather Alert\n" +
-            "   → Heavy rainfall and tidal surges expected for Puri region\n\n" +
-            "2. Puri Maritime Advisory\n" +
-            "   → Wind speed: 10-15 mph, Precipitation: 0.07 inches\n\n" +
-            "3. Multiple weather sources (timeanddate.com, wunderground, etc.)\n" +
-            "   → High humidity (75%), Overcast conditions\n\n" +
-            "CONSTRAINT IMPACT:\n" +
-            "Scene 42 exterior shoot INCOMPATIBLE with weather conditions.\n\n" +
-            "RECOVERY RECOMMENDATION:\n" +
-            "Swap with Scene 18 (Apartment Argument) — indoor, same lead cast.\n" +
-            "Risk Score: 0 (optimal)"
-        );
-    }
+                <!-- Scene & Templates Row -->
+                <div class="flex items-center gap-3 flex-wrap pb-3 border-b border-violet-900/30">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="film" class="w-4 h-4 text-violet-400"></i>
+                        <select id="scene-selector" class="bg-[#1C1733] text-slate-200 border border-violet-900/50 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+                            <option value="sc_42">sc_42: Reunion at High Tide</option>
+                            <option value="sc_18">sc_18: Night Highway Chase</option>
+                            <option value="sc_09">sc_09: Soundstage Interior</option>
+                            <option value="sc_25">sc_25: Police Interrogation</option>
+                            <option value="sc_14">sc_14: Maya Solo Monologue</option>
+                        </select>
+                    </div>
 
-    function approveRecoveryPlan() {
-        alert(
-            "✅ RECOVERY PLAN APPROVED!\n\n" +
-            "Schedule has been updated:\n" +
-            "• Day 7: Scene 18 (moved forward)\n" +
-            "• Day 8: Scene 42 (backup outdoor with weather buffer)\n\n" +
-            "Notifications sent to:\n" +
-            "✓ Line Producer (Schmidt)\n" +
-            "✓ Director (Ananya Sharma)\n" +
-            "✓ Cast (Arjun Kapoor, Maya Sen)\n" +
-            "✓ Location Manager (Puri Beach permit status: VALID)\n\n" +
-            "Cost Impact: $0 (no contract renegotiation needed)\n" +
-            "Timeline Impact: 0 days (within original 15-day window)"
-        );
-    }
-</script>
+                    <div class="flex items-center gap-2 overflow-x-auto">
+                        <span class="text-xs text-slate-400 whitespace-nowrap">Templates:</span>
+                        <button onclick="applyTemplate('Equipment Damaged')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Equipment</button>
+                        <button onclick="applyTemplate('Lead Actor Sick')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Actor</button>
+                        <button onclick="applyTemplate('Weather Alert')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Weather</button>
+                        <button onclick="applyTemplate('Location Blocked')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Location</button>
+                    </div>
+                </div>
 
+                <!-- Crisis Input -->
+                <textarea id="crisis-input" rows="2" placeholder="Describe the crisis or constraints..." class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-xl p-3 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 resize-none placeholder-slate-500"></textarea>
+
+                <!-- Mode & Submit -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-400">Mode:</span>
+                        <button id="btn-quick" onclick="setMode('quick')" class="mode-btn active px-3 py-1.5 rounded-lg border text-xs font-medium">Quick</button>
+                        <button id="btn-deep" onclick="setMode('deep')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs font-medium">Deep</button>
+                        <button id="btn-next" onclick="setMode('next_steps')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs font-medium">Next Steps</button>
+                    </div>
+
+                    <button id="submit-btn" onclick="submitCrisis()" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:from-violet-700 active:to-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-violet-900/40 transition-all duration-200 text-sm">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Analyze Crisis</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initializeApp();
+        });
+    </script>
 </body>
 </html>
