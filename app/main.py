@@ -20,8 +20,7 @@ from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import asyncio
 
@@ -75,30 +74,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Mount static files
-# Setup static files directory
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-os.makedirs(static_dir, exist_ok=True)
-
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
-
-@app.get("/", include_in_schema=False)
-def serve_ui():
-    """Serve the main UI page (index.html)"""
-    index_path = os.path.join(static_dir, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"message": "CineFlow API Ready. UI at http://localhost:8000"}
-
-# CORS - Allow UI access
+# CORS - Allow API access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000"
-    ],
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
