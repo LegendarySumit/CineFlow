@@ -17,6 +17,6 @@ services:
         value: production
       - key: LOG_LEVEL
         value: INFO
-    autoDeploy: false
+    autoDeploy: true
     healthCheckPath: /api/health
     healthCheckInterval: 300
