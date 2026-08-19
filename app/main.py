@@ -61,6 +61,13 @@ from app.services.project_manager import get_project_manager
 from app.services.readiness_analyzer import analyze_production_readiness
 from app.services.live_data_manager import get_live_data_manager
 from app.services.approval_workflow import get_approval_workflow
+from app.session_manager import get_or_create_session, SessionManager
+
+# Global session store
+session_store = type('SessionStore', (), {
+    'get_session': lambda self, sid: get_or_create_session(sid),
+    'sessions': {}
+})()
 
 app = FastAPI(
     title="CineFlow API",
