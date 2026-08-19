@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineFlow - Production Crisis Director</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .readiness {
+            margin-bottom: 15px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .status-critical {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .status-warning {
+            background: #ffa502;
+            color: white;
+        }
+        
+        .status-ok {
+            background: #2ed573;
+            color: white;
+        }
+        
+        .query-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-in;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .logs-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .logs-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .log-item {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .error {
+            color: #ff4757;
+            background: #ffe0e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 CineFlow - Production Crisis Director</h1>
+            <p class="subtitle">Multi-Agent AI System for Film Production Crisis Management</p>
+        </header>
+        
+        <div class="grid">
+            <div class="card">
+                <h2>📊 Daily Readiness</h2>
+                <div id="readiness-content">Loading...</div>
+            </div>
+            
+            <div class="card">
+                <h2>📈 System Status</h2>
+                <div class="readiness">
+                    <strong>Project:</strong> <span id="project-name">Monsoon Arc</span>
+                </div>
+                <div class="readiness">
+                    <strong>Date:</strong> <span id="report-date">2026-09-01</span>
+                </div>
+                <div class="readiness">
+                    <strong>Status:</strong> <span class="status-badge status-critical">PRODUCTION AT RISK</span>
+                </div>
+                <div class="readiness">
+                    <strong>Agent Status:</strong> <span class="status-badge status-ok">ACTIVE</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="query-section">
+            <h2>🔍 Crisis Analysis Query</h2>
+            <textarea id="query-input" placeholder="Enter your crisis query here...&#10;Example: What if the lead actor gets sick?&#10;Example: Location becomes unavailable due to weather&#10;Example: Equipment failure during production"></textarea>
+            <button onclick="analyzeCrisis()">Analyze Crisis</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing crisis with multi-agent system...</p>
+            </div>
+            
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <h3>✅ Analysis Results</h3>
+                <div class="result-item">
+                    <strong>Scene:</strong> <span id="result-scene">N/A</span>
+                </div>
+                <div class="result-item">
+                    <strong>Crisis Type:</strong> <span id="result-crisis">N/A</span>
+                </div>
+                <div class="result-item">
+                    <strong>Severity:</strong> <span id="result-severity">N/A</span>
+                </div>
+                <div class="result-item">
+                    <strong>Confidence:</strong> <span id="result-confidence">N/A</span>
+                </div>
+                <div class="result-item">
+                    <strong>Executive Summary:</strong>
+                    <p id="result-summary" style="margin-top: 10px; line-height: 1.6;">N/A</p>
+                </div>
+                <div class="result-item">
+                    <strong>Recommended Action:</strong>
+                    <p id="result-action" style="margin-top: 10px; line-height: 1.6;">N/A</p>
+                </div>
+                <div class="result-item">
+                    <strong>Quality Score:</strong> <span id="result-quality">N/A</span>%
+                </div>
+            </div>
+        </div>
+        
+        <div class="logs-section">
+            <h3>📋 Execution Logs</h3>
+            <p style="color: #666; margin-bottom: 15px; font-size: 14px;">Real-time logs from agent execution and analysis</p>
+            <div id="logs-content">
+                <p style="color: #999;">Loading logs...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load daily readiness on page load
+        window.addEventListener('load', function() {
+            loadDailyReadiness();
+            loadLogs();
+        });
+        
+        function loadDailyReadiness() {
+            fetch('/api/daily-readiness')
+                .then(response => response.json())
+                .then(data => {
+                    const html = `
+                        <div class="readiness">
+                            <strong>Project:</strong> ${data.project_name}
+                        </div>
+                        <div class="readiness">
+                            <strong>Director:</strong> ${data.director}
+                        </div>
+                        <div class="readiness">
+                            <strong>Status:</strong> <span class="status-badge status-critical">${data.overall_status}</span>
+                        </div>
+                        <div class="readiness">
+                            <strong>Scenes:</strong>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                ${data.scenes.map(s => `<li>${s.scene_id}: ${s.scene_title} - <span class="status-badge status-critical">${s.status}</span></li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    document.getElementById('readiness-content').innerHTML = html;
+                    document.getElementById('project-name').textContent = data.project_name;
+                    document.getElementById('report-date').textContent = data.date;
+                });
+        }
+        
+        function analyzeCrisis() {
+            const query = document.getElementById('query-input').value.trim();
+            
+            if (!query) {
+                showError('Please enter a crisis query');
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+            
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Analysis failed');
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                
+                document.getElementById('result-scene').textContent = data.scene_id || 'N/A';
+                document.getElementById('result-crisis').textContent = data.crisis_type || 'N/A';
+                document.getElementById('result-severity').textContent = data.severity || 'UNKNOWN';
+                document.getElementById('result-confidence').textContent = data.confidence || 0;
+                document.getElementById('result-summary').textContent = data.executive_summary || 'No summary available';
+                document.getElementById('result-quality').textContent = data.quality_score || 0;
+                
+                if (data.recommended_action) {
+                    const action = data.recommended_action;
+                    document.getElementById('result-action').textContent = 
+                        `${action.action_type || 'N/A'} - ${action.rationale || 'N/A'}`;
+                }
+                
+                document.getElementById('result').classList.add('show');
+                loadLogs();
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                showError(error.message);
+            });
+        }
+        
+        function loadLogs() {
+            fetch('/api/logs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logs.length === 0) {
+                        document.getElementById('logs-content').innerHTML = '<p style="color: #999;">No logs yet. Run an analysis to generate logs.</p>';
+                        return;
+                    }
+                    
+                    const html = `
+                        <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Log Directory: ${data.log_dir}</p>
+                        ${data.logs.map(log => `
+                            <div class="log-item">
+                                📄 ${log.name}
+                                <br><small style="color: #999;">Modified: ${new Date(log.modified).toLocaleString()}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                    document.getElementById('logs-content').innerHTML = html;
+                });
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '❌ Error: ' + message;
+            errorDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
