@@ -965,10 +965,7 @@ def health_check():
 
 
 
-try:
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
-except (OSError, RuntimeError) as e:
-    logger.warning(f"Static files mount failed: {e!s}")
+
 
 if __name__ == "__main__":
     import uvicorn
