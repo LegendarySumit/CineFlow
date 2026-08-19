@@ -247,6 +247,60 @@ git push origin main
 2. Sign up with GitHub account
 3. Connect your GitHub repository
 
+---
+
+## ✅ LIVE DEPLOYMENT - Proof of Real Execution
+
+**CineFlow is LIVE and OPERATIONAL on Render.com**
+
+### 🌐 Live URL
+```
+https://cineflow-api-m7bu.onrender.com
+```
+
+### ✅ Real API Execution with Gemini
+**Endpoint:** `POST /api/analyze-crisis`
+
+**Test Command (Try Now):**
+```bash
+curl -X POST https://cineflow-api-m7bu.onrender.com/api/analyze-crisis \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Lead actor got sick", "scene_id": "sc_001"}'
+```
+
+**Real Response (Gemini API Executed):**
+```json
+{
+  "status": "success",
+  "session_id": "aa4f8b97-70aa-4ebf-8f0e-3a4cea4d4f65",
+  "analysis": {
+    "crisis_type": "CAST",
+    "severity": "CRITICAL",
+    "recommended_action": {
+      "action": "SWAP",
+      "target_scene": "sc_003",
+      "confidence": "HIGH"
+    },
+    "executive_summary": "**EXECUTIVE SUMMARY: SC_001**\nWe are facing a localized talent/schedule friction point...",
+    "financial_impact": {
+      "total_cost_inr": 900000,
+      "daily_burn": 300000
+    }
+  }
+}
+```
+
+### Available Live Endpoints
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/health` | GET | Health check |
+| `/api/deployment-info` | GET | Deployment metadata |
+| `/api/analyze-crisis` | POST | **Main crisis analysis (Real Gemini API)** |
+| `/api/audit-logs` | GET | Execution audit trails |
+| `/docs` | GET | OpenAPI/Swagger documentation |
+
+---
+
 ### Step 3: Deploy Service
 
 1. Click **"New +"** → **"Web Service"**
