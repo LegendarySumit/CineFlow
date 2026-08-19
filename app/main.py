@@ -187,6 +187,7 @@ def analyze_crisis(request: CrisisRequest):
         
         # STEP 2: Initialize Supervisor Agent with session tracking
         supervisor = SupervisorAgent(session_id=session.session_id)
+        supervisor.project_data = DATASET  # Pass DATASET to supervisor so workers can access scenes
         
         # STEP 3: Run agent with session context (PLANNING + REFLECTION)
         result = supervisor.run(request.prompt, request.scene_id or "sc_42", session.state)
