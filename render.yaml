@@ -1,18 +1,22 @@
 services:
   - type: web
-    name: cineflow
-    runtime: python
+    name: cineflow-api
+    env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app.web_app:app
+    startCommand: gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.13"
       - key: GEMINI_API_KEY
-        value: AIzaSyBVuglJuhtq44M3GSetWl0WunGZTT7a_DE
+        scope: run
       - key: GEMINI_MODEL
         value: gemini-3.5-flash-lite
-      - key: PARALLEL_API_KEY
-        value: ijWTrF4yby5cR8Gs4y0HpbEjXqlKyN6PBJC_Qun0
-      - key: PYTHONUNBUFFERED
-        value: "1"
-      - key: PORT
-        value: "8000"
-
+      - key: MAX_REFINEMENTS
+        value: "0"
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+    autoDeploy: false
+    healthCheckPath: /api/health
+    healthCheckInterval: 300

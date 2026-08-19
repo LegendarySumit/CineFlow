@@ -187,7 +187,7 @@ CineFlow/
 - **Google Gemini API Key** (free tier at [Google AI Studio](https://gemini.google.com/app))
 - **pip** package manager
 
-### Installation
+### Local Installation
 
 ```bash
 # Clone the repository
@@ -203,7 +203,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### Configuration
+### Local Configuration
 
 ```bash
 # Copy environment template
@@ -215,20 +215,82 @@ GEMINI_MODEL=gemini-3.5-flash-lite
 PORT=8000
 ```
 
-### Run Terminal Interface
+### Run Locally
 
+**Terminal Interface:**
 ```bash
-# Full agent execution with real-time output
 python app/run_main.py
 ```
 
-### Run API Server
-
+**FastAPI Backend:**
 ```bash
-# FastAPI backend (http://localhost:8000)
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-# View API docs: http://localhost:8000/docs
+# API Docs: http://localhost:8000/docs
+```
+
+---
+
+## ☁️ Deploy to Render.com (FREE - No Billing Required)
+
+### Step 1: Prepare Repository
+
+```bash
+git add .
+git commit -m "Ready for Render deployment"
+git push origin main
+```
+
+### Step 2: Create Render Account
+
+1. Go to [render.com](https://render.com)
+2. Sign up with GitHub account
+3. Connect your GitHub repository
+
+### Step 3: Deploy Service
+
+1. Click **"New +"** → **"Web Service"**
+2. Select your **CineFlow** repository
+3. Fill in configuration:
+   - **Name:** `cineflow-api`
+   - **Runtime:** `Python 3`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000`
+
+### Step 4: Add Environment Variables
+
+In Render dashboard, add:
+
+| Key | Value |
+|-----|-------|
+| `GEMINI_API_KEY` | Your API key from Google AI Studio |
+| `GEMINI_MODEL` | `gemini-3.5-flash-lite` |
+| `ENVIRONMENT` | `production` |
+| `LOG_LEVEL` | `INFO` |
+| `MAX_REFINEMENTS` | `0` |
+
+### Step 5: Deploy
+
+1. Click **"Create Web Service"**
+2. Wait for build to complete (2-3 minutes)
+3. Your live URL appears: `https://cineflow-api.onrender.com`
+
+### Step 6: Test Live Deployment
+
+```bash
+# Health check
+curl https://cineflow-api.onrender.com/api/health
+
+# View API documentation
+https://cineflow-api.onrender.com/docs
+
+# Test crisis analysis
+curl -X POST https://cineflow-api.onrender.com/api/analyze-crisis \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Lead actor got sick what should we do",
+    "scene_id": "sc_001"
+  }'
 ```
 
 ---
