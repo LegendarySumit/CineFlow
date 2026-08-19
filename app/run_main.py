@@ -20,7 +20,7 @@ from app.tools.production import load_dataset
 # Setup logging to audit_logs
 def setup_audit_logger():
     """Create audit log file for this session"""
-    log_dir = Path(__file__).parent.parent.parent / "audit_logs"
+    log_dir = Path(__file__).parent.parent / "audit_logs"
     log_dir.mkdir(exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S_%f")
