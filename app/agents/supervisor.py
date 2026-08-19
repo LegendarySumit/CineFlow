@@ -10,9 +10,12 @@ This is the core agentic orchestrator using the Vellum framework.
 import json
 import os
 import time
+import warnings
 from datetime import datetime, timezone
 from typing import Any
 
+# Suppress FutureWarning from deprecated google.generativeai package
+warnings.filterwarnings('ignore', category=FutureWarning, module='google.generativeai')
 import google.generativeai as genai
 from dotenv import load_dotenv
 

@@ -8,9 +8,13 @@ Answers: "Can we shoot today? Any issues? What should we prepare?"
 
 import json
 import os
+import warnings
 from typing import Any
 from datetime import datetime
 from dotenv import load_dotenv
+
+# Suppress FutureWarning from deprecated google.generativeai package
+warnings.filterwarnings('ignore', category=FutureWarning, module='google.generativeai')
 import google.generativeai as genai
 
 from app.agents.workers.external_info_worker import gather_external_context
