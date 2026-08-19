@@ -2,10 +2,13 @@
 CONSTRAINTS - Scene impact evaluation for production dependencies.
 
 Evaluates how a scene's resources (cast, equipment, location) are affected
-by disruptions.
+by disruptions. Works with both old and new dataset formats.
 """
 
 from typing import Any
+
+from app.tools.format_compat import detect_format, get_scene_cast_ids, get_scene_equipment_ids
+from app.tools.production import get_scene_by_id
 
 
 def evaluate_scene_impact(scene_id: str, dataset: dict[str, Any]) -> dict[str, Any]:
@@ -15,8 +18,7 @@ def evaluate_scene_impact(scene_id: str, dataset: dict[str, Any]) -> dict[str, A
     Returns the resources affected, so other scenes can be checked for compatibility.
     """
     
-    scenes = dataset.get("scenes", [])
-    scene = next((s for s in scenes if s["scene_id"] == scene_id), None)
+    scene = get_scene_by_id(scene_id, dataset)
     
     if not scene:
         return {
@@ -31,18 +33,19 @@ def evaluate_scene_impact(scene_id: str, dataset: dict[str, Any]) -> dict[str, A
         }
     
     # Get actor names
-    actors = dataset.get("actors", [])
-    actor_ids = scene.get("cast_ids", [])
+    is_new_fmt = (detect_format(dataset) == 'new')
+    actors = dataset.get("actors", []) or dataset.get("cast", [])
+    actor_ids = get_scene_cast_ids(scene, is_new_fmt)
     actor_names = [
-        next((a["name"] for a in actors if a["actor_id"] == aid), "Unknown")
+        next((a.get("name") for a in actors if a.get("actor_id") == aid), "Unknown")
         for aid in actor_ids
     ]
     
     # Get equipment names
     equipment = dataset.get("equipment", [])
-    equipment_ids = scene.get("equipment_ids", [])
+    equipment_ids = get_scene_equipment_ids(scene, is_new_fmt)
     equipment_names = [
-        next((e["name"] for e in equipment if e["equipment_id"] == eid), "Unknown")
+        next((e.get("name") for e in equipment if e.get("equipment_id") == eid), "Unknown")
         for eid in equipment_ids
     ]
     

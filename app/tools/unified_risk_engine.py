@@ -9,9 +9,13 @@ Instead of separate tools for:
 - Location access
 
 This single engine checks resource conflicts across ANY domain.
+Works with both old (data/) and new (projects/) formats.
 """
 
 from typing import Any
+
+from app.tools.format_compat import detect_format, get_scene_dependencies, _get_cast_ids, _get_equipment_ids
+from app.tools.production import get_scene_by_id
 
 
 def detect_crisis_type(user_query: str) -> dict[str, Any]:
@@ -114,8 +118,7 @@ def evaluate_schedule_impact(scene_id: str, affected_resource: str, crisis_type:
     - A permit: "Puri-Coastal-Zone-A"
     """
     
-    scenes = dataset.get("scenes", [])
-    target_scene = next((s for s in scenes if s["scene_id"] == scene_id), None)
+    target_scene = get_scene_by_id(scene_id, dataset)
     
     if not target_scene:
         return {
@@ -124,11 +127,30 @@ def evaluate_schedule_impact(scene_id: str, affected_resource: str, crisis_type:
         }
     
     # Get dependencies for this scene
-    dependencies = target_scene.get("dependencies", {})
-    cast_blocking = dependencies.get("cast_blocking", [])
-    location_blocking = dependencies.get("location_blocking", [])
-    equipment_blocking = dependencies.get("equipment_blocking", [])
-    permit_blocking = dependencies.get("permit_blocking", [])
+    is_new_fmt = (detect_format(dataset) == 'new')
+    
+    # Handle both old and new formats
+    if is_new_fmt:
+        # New format: dependencies is a string or null
+        # For new format, we need to check scene's cast_required, equipment_required
+        cast_blocking = target_scene.get("cast_required", [])
+        location_blocking = [target_scene.get("location_id")] if target_scene.get("location_id") else []
+        equipment_blocking = target_scene.get("equipment_required", [])
+        permit_blocking = []  # Not in new format
+    else:
+        # Old format: dependencies is a dict
+        dependencies = target_scene.get("dependencies", {})
+        if isinstance(dependencies, str):
+            # Fallback if it's a string
+            cast_blocking = []
+            location_blocking = []
+            equipment_blocking = []
+            permit_blocking = []
+        else:
+            cast_blocking = dependencies.get("cast_blocking", [])
+            location_blocking = dependencies.get("location_blocking", [])
+            equipment_blocking = dependencies.get("equipment_blocking", [])
+            permit_blocking = dependencies.get("permit_blocking", [])
     
     # Check if affected_resource blocks this scene
     is_blocked = False
@@ -177,7 +199,7 @@ def find_compatible_swaps(scene_id: str, affected_resource: str, crisis_type: st
     
     scenes = dataset.get("scenes", [])
     
-    target_scene = next((s for s in scenes if s["scene_id"] == scene_id), None)
+    target_scene = get_scene_by_id(scene_id, dataset)
     if not target_scene:
         return []
     
@@ -190,11 +212,27 @@ def find_compatible_swaps(scene_id: str, affected_resource: str, crisis_type: st
             continue
         
         # Check if candidate requires the blocked resource
-        dependencies = candidate.get("dependencies", {})
-        cast_blocking = dependencies.get("cast_blocking", [])
-        location_blocking = dependencies.get("location_blocking", [])
-        equipment_blocking = dependencies.get("equipment_blocking", [])
-        permit_blocking = dependencies.get("permit_blocking", [])
+        is_new_fmt = (detect_format(dataset) == 'new')
+        
+        if is_new_fmt:
+            # New format: dependencies is a string
+            cast_blocking = candidate.get("cast_required", [])
+            location_blocking = [candidate.get("location_id")] if candidate.get("location_id") else []
+            equipment_blocking = candidate.get("equipment_required", [])
+            permit_blocking = []
+        else:
+            # Old format: dependencies is a dict
+            dependencies = candidate.get("dependencies", {})
+            if isinstance(dependencies, str):
+                cast_blocking = []
+                location_blocking = []
+                equipment_blocking = []
+                permit_blocking = []
+            else:
+                cast_blocking = dependencies.get("cast_blocking", [])
+                location_blocking = dependencies.get("location_blocking", [])
+                equipment_blocking = dependencies.get("equipment_blocking", [])
+                permit_blocking = dependencies.get("permit_blocking", [])
         
         requires_blocked_resource = (
             affected_resource in cast_blocking or
@@ -218,7 +256,7 @@ def find_compatible_swaps(scene_id: str, affected_resource: str, crisis_type: st
             score += 20
         
         # Bonus: Shares cast with target (already on-set)
-        shared_cast = set(target_scene.get("cast_ids", [])) & set(candidate.get("cast_ids", []))
+        shared_cast = set(_get_cast_ids(target_scene, is_new_fmt)) & set(_get_cast_ids(candidate, is_new_fmt))
         if shared_cast:
             score += 15
         

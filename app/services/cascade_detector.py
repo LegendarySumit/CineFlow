@@ -11,7 +11,8 @@ This enables multi-level crisis planning.
 
 from typing import Any
 
-from app.tools.production import load_dataset
+from app.tools.format_compat import detect_format, get_scene_cast_ids, get_scene_equipment_ids, _get_cast_ids, _get_equipment_ids
+from app.tools.production import load_dataset, get_scene_by_id
 
 
 def detect_cascading_crises(
@@ -98,8 +99,8 @@ def _detect_swap_cascades(decision: dict[str, Any], dataset: dict[str, Any]) -> 
     assert source_schedule is not None
     assert target_schedule is not None
     
-    source_actors = source_scene.get("cast_ids", [])
-    source_equipment = source_scene.get("equipment_ids", [])
+    source_actors = _get_cast_ids(source_scene, is_new_format=(detect_format(dataset) == 'new'))
+    source_equipment = _get_equipment_ids(source_scene, is_new_format=(detect_format(dataset) == 'new'))
     source_new_date = target_schedule.get("date")
     
     # ════════════════════════════════════════════════════════════════
@@ -107,10 +108,11 @@ def _detect_swap_cascades(decision: dict[str, Any], dataset: dict[str, Any]) -> 
     # ════════════════════════════════════════════════════════════════
     
     # Check if any source actor is filming target scene's original scene on new date
+    is_new_fmt = (detect_format(dataset) == 'new')
     conflicting_actors = []
     for actor_id in source_actors:
         # Find all scenes this actor appears in
-        actor_scenes = [s for s in scenes if actor_id in s.get("cast_ids", [])]
+        actor_scenes = [s for s in scenes if actor_id in _get_cast_ids(s, is_new_fmt)]
         actor_scene_ids = [s["scene_id"] for s in actor_scenes]
         
         # Check if actor has OTHER scenes on the new date
@@ -141,7 +143,7 @@ def _detect_swap_cascades(decision: dict[str, Any], dataset: dict[str, Any]) -> 
     conflicting_equipment = []
     for equipment_id in source_equipment:
         # Check if same equipment is needed by other scenes on new date
-        equipment_scenes = [s for s in scenes if equipment_id in s.get("equipment_ids", [])]
+        equipment_scenes = [s for s in scenes if equipment_id in _get_equipment_ids(s, is_new_fmt)]
         equipment_scene_ids = [s["scene_id"] for s in equipment_scenes]
         
         for other_scene_id in equipment_scene_ids:
@@ -227,11 +229,12 @@ def _detect_reschedule_cascades(decision: dict[str, Any], dataset: dict[str, Any
         return cascades
     
     # Check if cast is available on new date
-    cast_ids = scene.get("cast_ids", [])
+    is_new_fmt = (detect_format(dataset) == 'new')
+    cast_ids = _get_cast_ids(scene, is_new_fmt)
     cast_conflicts = []
     
     for actor_id in cast_ids:
-        actor_scenes = [s for s in scenes if actor_id in s.get("cast_ids", [])]
+        actor_scenes = [s for s in scenes if actor_id in _get_cast_ids(s, is_new_fmt)]
         for actor_scene in actor_scenes:
             actor_scene_id = actor_scene["scene_id"]
             if actor_scene_id != scene_id:
@@ -382,15 +385,16 @@ def get_safe_alternatives(
     # If SWAP caused cascades, suggest alternative targets
     if primary_decision.get("decision_type") == "SWAP":
         source_id = primary_decision.get("source_scene_id")
-        source_scene = next((s for s in dataset.get("scenes", []) if s["scene_id"] == source_id), None)
+        source_scene = get_scene_by_id(source_id, dataset)
         
         if not source_scene:
             return alternatives
         
         # Get source scene properties
         source_type = source_scene.get("interior_exterior", "UNKNOWN")
-        source_cast = set(source_scene.get("cast_ids", []))
-        source_equipment = set(source_scene.get("equipment_ids", []))
+        is_new_fmt = (detect_format(dataset) == 'new')
+        source_cast = set(_get_cast_ids(source_scene, is_new_fmt))
+        source_equipment = set(_get_equipment_ids(source_scene, is_new_fmt))
         
         all_scenes = dataset.get("scenes", [])
         
@@ -421,13 +425,13 @@ def get_safe_alternatives(
                     compatibility += 1
                 
                 # Similar cast = +1
-                candidate_cast = set(scene.get("cast_ids", []))
+                candidate_cast = set(_get_cast_ids(scene, is_new_fmt))
                 cast_overlap = len(source_cast & candidate_cast)
                 if cast_overlap == 0:
                     compatibility += 1
                 
                 # Similar equipment = +1
-                candidate_equipment = set(scene.get("equipment_ids", []))
+                candidate_equipment = set(_get_equipment_ids(scene, is_new_fmt))
                 equipment_overlap = len(source_equipment & candidate_equipment)
                 if equipment_overlap == 0:
                     compatibility += 1

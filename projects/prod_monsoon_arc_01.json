@@ -1,0 +1,697 @@
+{
+  "metadata": {
+    "project_id": "prod_monsoon_arc_01",
+    "project_name": "Monsoon Arc",
+    "production_type": "Feature Film",
+    "genre": "Drama",
+    "created_at": "2026-08-17T12:00:00Z",
+    "director": "Vishal Bhardwaj",
+    "producer": "Ekta Kapoor",
+    "line_producer": "Rajesh Kumar",
+    "production_budget_inr": 3500000000,
+    "total_shoot_days": 45,
+    "start_date": "2026-09-01",
+    "end_date": "2026-10-31",
+    "current_date": "2026-09-01",
+    "current_day": 1,
+    "status": "PRE_PRODUCTION"
+  },
+  "cast": [
+    {
+      "actor_id": "actor_001",
+      "name": "Ranveer Singh",
+      "role": "Aditya Sharma",
+      "character_type": "LEAD",
+      "availability": {
+        "status": "AVAILABLE",
+        "available_from": "2026-09-01",
+        "available_until": "2026-10-31",
+        "unavailable_dates": [],
+        "cascade_dependency": "If unavailable, scenes 1-5, 8-10, 15-18, 22-25 cannot shoot"
+      },
+      "contract_details": {
+        "daily_rate_inr": 500000,
+        "contract_end_date": "2026-11-15",
+        "special_requirements": "Stunt coordinator, dialect coach (Marathi)"
+      }
+    },
+    {
+      "actor_id": "actor_002",
+      "name": "Deepika Padukone",
+      "role": "Priya Desai",
+      "character_type": "LEAD",
+      "availability": {
+        "status": "AVAILABLE",
+        "available_from": "2026-09-01",
+        "available_until": "2026-10-31",
+        "unavailable_dates": ["2026-09-15", "2026-09-16"],
+        "cascade_dependency": "If unavailable, scenes 3-7, 11-14, 19-23 cannot shoot"
+      },
+      "contract_details": {
+        "daily_rate_inr": 550000,
+        "contract_end_date": "2026-11-15",
+        "special_requirements": "None"
+      }
+    },
+    {
+      "actor_id": "actor_003",
+      "name": "Nawazuddin Siddiqui",
+      "role": "Ramakant Gupta",
+      "character_type": "SUPPORTING",
+      "availability": {
+        "status": "AVAILABLE",
+        "available_from": "2026-09-01",
+        "available_until": "2026-09-30",
+        "unavailable_dates": [],
+        "cascade_dependency": "If unavailable, scenes 6, 9, 12, 16, 20 cannot shoot"
+      },
+      "contract_details": {
+        "daily_rate_inr": 300000,
+        "contract_end_date": "2026-10-15",
+        "special_requirements": "None"
+      }
+    },
+    {
+      "actor_id": "actor_004",
+      "name": "Alia Bhatt",
+      "role": "Meera Sharma",
+      "character_type": "SUPPORTING",
+      "availability": {
+        "status": "AVAILABLE",
+        "available_from": "2026-09-10",
+        "available_until": "2026-10-31",
+        "unavailable_dates": ["2026-09-20"],
+        "cascade_dependency": "If unavailable, scenes 11, 13, 17, 21, 26 cannot shoot"
+      },
+      "contract_details": {
+        "daily_rate_inr": 350000,
+        "contract_end_date": "2026-11-15",
+        "special_requirements": "None"
+      }
+    },
+    {
+      "actor_id": "actor_005",
+      "name": "Pankaj Tripathi",
+      "role": "Police Inspector Thorat",
+      "character_type": "SUPPORTING",
+      "availability": {
+        "status": "AVAILABLE",
+        "available_from": "2026-09-15",
+        "available_until": "2026-10-20",
+        "unavailable_dates": [],
+        "cascade_dependency": "If unavailable, scenes 14, 18, 24, 28, 32 cannot shoot"
+      },
+      "contract_details": {
+        "daily_rate_inr": 250000,
+        "contract_end_date": "2026-10-30",
+        "special_requirements": "None"
+      }
+    }
+  ],
+  "equipment": [
+    {
+      "equipment_id": "eq_camera_001",
+      "name": "RED Komodo 6K Camera",
+      "category": "CAMERA",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 150000,
+      "availability_period": {
+        "from": "2026-09-01",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "resolution": "6K",
+        "sensor": "Full Frame",
+        "fps": "60fps",
+        "lenses_included": ["Canon EF 16-35mm", "Canon EF 50mm", "Canon EF 85-100mm"]
+      },
+      "maintenance_schedule": "Every 10 days",
+      "cascade_dependency": "If unavailable, all outdoor scenes (1-5, 7-10, 15-18, 22-25) cannot shoot"
+    },
+    {
+      "equipment_id": "eq_camera_002",
+      "name": "ARRI Alexa Mini LF",
+      "category": "CAMERA",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 120000,
+      "availability_period": {
+        "from": "2026-09-05",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "resolution": "4K",
+        "sensor": "Large Format",
+        "fps": "48fps",
+        "lenses_included": ["Zeiss Master Prime Set"]
+      },
+      "maintenance_schedule": "Every 12 days",
+      "cascade_dependency": "If unavailable, indoor scenes (11-14, 19-21, 26-29) cannot shoot"
+    },
+    {
+      "equipment_id": "eq_drone_001",
+      "name": "DJI Inspire 3 Enterprise",
+      "category": "DRONE",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 75000,
+      "availability_period": {
+        "from": "2026-09-01",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "max_altitude": "500m",
+        "flight_time": "46 minutes",
+        "resolution": "4K Hasselblad Camera",
+        "weather_rating": "Wind up to 40 km/h"
+      },
+      "maintenance_schedule": "Every 7 days",
+      "cascade_dependency": "If unavailable, aerial shots in scenes 2, 5, 8, 15, 25 cannot shoot"
+    },
+    {
+      "equipment_id": "eq_lighting_001",
+      "name": "HMI Light Kit (18K + 12K + 6K)",
+      "category": "LIGHTING",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 80000,
+      "availability_period": {
+        "from": "2026-09-01",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "total_power": "36KW",
+        "controllable": true,
+        "includes": "Stands, cables, diffusion, flags"
+      },
+      "maintenance_schedule": "Every 14 days",
+      "cascade_dependency": "If unavailable, night scenes (6, 9, 12, 16, 20) cannot shoot"
+    },
+    {
+      "equipment_id": "eq_sound_001",
+      "name": "Sennheiser MKE 600 + Wireless Kit",
+      "category": "AUDIO",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 35000,
+      "availability_period": {
+        "from": "2026-09-01",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "microphones": 4,
+        "wireless_channels": 8,
+        "range": "300 meters"
+      },
+      "maintenance_schedule": "Every 20 days",
+      "cascade_dependency": "If unavailable, dialogue-heavy scenes (3, 7, 11, 13, 19) suffer quality"
+    },
+    {
+      "equipment_id": "eq_grip_001",
+      "name": "Dolly Track + Steadicam Setup",
+      "category": "GRIP",
+      "status": "AVAILABLE",
+      "daily_rental_inr": 45000,
+      "availability_period": {
+        "from": "2026-09-01",
+        "to": "2026-10-31"
+      },
+      "technical_specs": {
+        "track_length": "30 meters",
+        "steadicam_weight_capacity": "20kg",
+        "setup_time": "3 hours"
+      },
+      "maintenance_schedule": "Every 10 days",
+      "cascade_dependency": "If unavailable, complex movement scenes (4, 10, 17, 23, 30) must be static"
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_beach_001",
+      "location_name": "Goa Beach - Arambol",
+      "location_type": "OUTDOOR_BEACH",
+      "address": "Arambol Beach, North Goa, India",
+      "daily_rental_inr": 50000,
+      "permits": {
+        "coastal_zone_permit": {
+          "status": "APPROVED",
+          "valid_from": "2026-09-01",
+          "valid_until": "2026-10-31",
+          "permit_id": "CGZ-2026-08-001"
+        },
+        "filming_permit": {
+          "status": "PENDING",
+          "expected_approval": "2026-08-25",
+          "permit_id": "FP-GOA-2026-08-002"
+        }
+      },
+      "weather_dependency": "CRITICAL",
+      "weather_notes": "Monsoon season - prone to sudden storms, high tides 6am-9am and 6pm-9pm",
+      "access_hours": "8am to 5pm",
+      "setup_teardown_hours": 4,
+      "cascade_dependency": "If blocked, scenes 1, 2, 5, 8, 15, 25 cannot shoot"
+    },
+    {
+      "location_id": "loc_studio_001",
+      "location_name": "Kalinga Studios - Soundstage A",
+      "location_type": "INDOOR_STUDIO",
+      "address": "Pune Film City, Pune, India",
+      "daily_rental_inr": 120000,
+      "permits": {
+        "studio_license": {
+          "status": "APPROVED",
+          "valid_from": "2026-01-01",
+          "valid_until": "2026-12-31",
+          "permit_id": "STUDIO-KALINGA-2026"
+        }
+      },
+      "weather_dependency": "NONE",
+      "access_hours": "24/7",
+      "setup_teardown_hours": 2,
+      "technical_specs": {
+        "stage_size": "100m x 80m",
+        "ceiling_height": "15m",
+        "green_screen": true,
+        "sound_proof": true
+      },
+      "cascade_dependency": "If unavailable, interior scenes (11, 13, 14, 19, 21, 26, 29) cannot shoot"
+    },
+    {
+      "location_id": "loc_city_001",
+      "location_name": "Mumbai Street - Lower Parel",
+      "location_type": "OUTDOOR_URBAN",
+      "address": "Lower Parel, Mumbai, Maharashtra",
+      "daily_rental_inr": 75000,
+      "permits": {
+        "traffic_diversion": {
+          "status": "APPROVED",
+          "valid_from": "2026-09-10",
+          "valid_until": "2026-09-20",
+          "permit_id": "TRAF-MUM-2026-08-003"
+        }
+      },
+      "weather_dependency": "MEDIUM",
+      "weather_notes": "Urban area - rain can cause traffic delays",
+      "access_hours": "6am to 9am, 4pm to 7pm (off-peak)",
+      "setup_teardown_hours": 3,
+      "cascade_dependency": "If blocked, scenes 7, 10, 16, 20, 27 cannot shoot"
+    },
+    {
+      "location_id": "loc_police_001",
+      "location_name": "Police Station - Nashik",
+      "location_type": "INDOOR_PRACTICAL",
+      "address": "Nashik Police Station, Nashik, Maharashtra",
+      "daily_rental_inr": 30000,
+      "permits": {
+        "location_permission": {
+          "status": "APPROVED",
+          "valid_from": "2026-09-15",
+          "valid_until": "2026-10-20",
+          "permit_id": "LOC-NASHIK-2026-08-004"
+        }
+      },
+      "weather_dependency": "NONE",
+      "access_hours": "8am to 6pm",
+      "setup_teardown_hours": 2,
+      "cascade_dependency": "If unavailable, scenes 14, 18, 24, 28, 32 cannot shoot"
+    },
+    {
+      "location_id": "loc_farm_001",
+      "location_name": "Sugar Cane Farm - Maharashtra",
+      "location_type": "OUTDOOR_RURAL",
+      "address": "Near Kolhapur, Maharashtra",
+      "daily_rental_inr": 40000,
+      "permits": {
+        "land_permission": {
+          "status": "APPROVED",
+          "valid_from": "2026-09-01",
+          "valid_until": "2026-10-31",
+          "permit_id": "LAND-KOLHAPUR-2026-08-005"
+        }
+      },
+      "weather_dependency": "CRITICAL",
+      "weather_notes": "Monsoon flooding risk - check water levels daily",
+      "access_hours": "7am to 5pm",
+      "setup_teardown_hours": 2,
+      "cascade_dependency": "If blocked, scenes 3, 6, 9, 12, 22 cannot shoot"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "sc_001",
+      "scene_number": 1,
+      "scene_title": "Monsoon Arrives at Arambol Beach",
+      "description": "Aditya arrives at Arambol Beach during early monsoon. Dark clouds gather over the Arabian Sea. He stands alone on the beach, contemplating his past decisions. The waves crash violently. Emotional moment establishing his internal conflict and the film's core theme of redemption.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-01",
+        "time_of_day": "DAWN",
+        "duration_hours": 4,
+        "estimated_shots": 12
+      },
+      "cast_required": ["actor_001"],
+      "equipment_required": ["eq_camera_001", "eq_sound_001"],
+      "location_id": "loc_beach_001",
+      "dependencies": "None",
+      "contingency": "If weather severe, can reschedule to sc_001B (indoor dream sequence)"
+    },
+    {
+      "scene_id": "sc_002",
+      "scene_number": 2,
+      "scene_title": "Aerial View of Monsoon Clouds",
+      "description": "Drone footage of approaching monsoon clouds over the Arabian Sea. Wide establishing shots showing the magnitude and power of nature. The sky transforms from blue to grey to black. Used for montage and transition sequences.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-01",
+        "time_of_day": "MORNING",
+        "duration_hours": 2,
+        "estimated_shots": 8
+      },
+      "cast_required": [],
+      "equipment_required": ["eq_drone_001"],
+      "location_id": "loc_beach_001",
+      "dependencies": "None",
+      "contingency": "If wind >40 km/h, defer to next day"
+    },
+    {
+      "scene_id": "sc_003",
+      "scene_number": 3,
+      "scene_title": "First Meeting in Sugar Cane Fields",
+      "description": "Aditya meets Priya in a sprawling sugar cane farm. She's working despite the monsoon rains. Their first dialogue-heavy scene establishing chemistry and backstory. Rain intensifies. Emotional tension builds as they discuss past betrayals.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-02",
+        "time_of_day": "AFTERNOON",
+        "duration_hours": 5,
+        "estimated_shots": 18
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_sound_001", "eq_grip_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_001 must be shot first",
+      "contingency": "If flood risk high, move to sc_003B (studio recreation)"
+    },
+    {
+      "scene_id": "sc_004",
+      "scene_number": 4,
+      "scene_title": "Chase Through Muddy Fields",
+      "description": "Aditya chases Priya through muddy, rain-soaked sugar cane fields. High-energy sequence with quick camera movements and dynamic framing. They argue about past mistakes while running. Visceral and kinetic energy builds.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-03",
+        "time_of_day": "AFTERNOON",
+        "duration_hours": 3,
+        "estimated_shots": 15
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_grip_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_003 must be completed",
+      "contingency": "If muddy conditions too extreme, use alternate field location"
+    },
+    {
+      "scene_id": "sc_005",
+      "scene_number": 5,
+      "scene_title": "Helicopter Landing - Aerial Rescue",
+      "description": "Wide aerial shots of a helicopter descending through monsoon rain towards the farm. Dramatic rescue sequence establishing external threat and time pressure. Priya's uncle (antagonist) arrives unexpectedly.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-04",
+        "time_of_day": "MORNING",
+        "duration_hours": 2,
+        "estimated_shots": 6
+      },
+      "cast_required": [],
+      "equipment_required": ["eq_drone_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_004 must complete before this",
+      "contingency": "If weather unsuitable, use CGI helicopter shots"
+    },
+    {
+      "scene_id": "sc_006",
+      "scene_number": 6,
+      "scene_title": "Night Interrogation at Farm",
+      "description": "Nighttime scene at the farm. Aditya is interrogated about his past by Ramakant (police inspector). Harsh lighting creates tension. Secrets begin to unravel. Intimate two-person scene heavy on dialogue and emotional conflict.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-05",
+        "time_of_day": "NIGHT",
+        "duration_hours": 4,
+        "estimated_shots": 14
+      },
+      "cast_required": ["actor_001", "actor_003"],
+      "equipment_required": ["eq_camera_001", "eq_lighting_001", "eq_sound_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_005 provides context",
+      "contingency": "Can be shot in studio if location unavailable"
+    },
+    {
+      "scene_id": "sc_007",
+      "scene_number": 7,
+      "scene_title": "Mumbai Street - Police Chase",
+      "description": "Aditya escapes through busy Mumbai streets during monsoon rain. Practical car chase mixed with on-foot pursuit. Urban energy contrasts with rural monsoon scenes. Uses Lower Parel street locations. High-adrenaline sequence.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-10",
+        "time_of_day": "EARLY_MORNING",
+        "duration_hours": 6,
+        "estimated_shots": 20
+      },
+      "cast_required": ["actor_001"],
+      "equipment_required": ["eq_camera_001", "eq_camera_002", "eq_drone_001"],
+      "location_id": "loc_city_001",
+      "dependencies": "sc_006 must establish his fugitive status",
+      "contingency": "Use CG vehicles if traffic diversion not approved"
+    },
+    {
+      "scene_id": "sc_008",
+      "scene_number": 8,
+      "scene_title": "Beach Flashback - Younger Aditya",
+      "description": "Flashback sequence showing younger Aditya at the same Arambol Beach years ago with Priya. Happier times before the betrayal. Used to establish their history and romance. Contrasts with present-day darkness. Emotional resonance for audience.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-12",
+        "time_of_day": "SUNSET",
+        "duration_hours": 3,
+        "estimated_shots": 12
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_sound_001", "eq_drone_001"],
+      "location_id": "loc_beach_001",
+      "dependencies": "sc_007 speeds up narrative",
+      "contingency": "If weather bad, defer to consecutive day"
+    },
+    {
+      "scene_id": "sc_009",
+      "scene_number": 9,
+      "scene_title": "Night Drive Through Storm",
+      "description": "Aditya drives through heavy monsoon storm at night. Windshield wipers struggling. Rain pounding on car roof. Atmospheric, tense driving sequence showing internal turmoil through external chaos. Limited dialogue, heavy on visual storytelling.",
+      "story_significance": "MEDIUM",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-14",
+        "time_of_day": "NIGHT",
+        "duration_hours": 3,
+        "estimated_shots": 10
+      },
+      "cast_required": ["actor_001"],
+      "equipment_required": ["eq_camera_001", "eq_lighting_001"],
+      "location_id": "loc_city_001",
+      "dependencies": "sc_008 provides emotional setup",
+      "contingency": "Can be shot on controlled set if weather too severe"
+    },
+    {
+      "scene_id": "sc_010",
+      "scene_number": 10,
+      "scene_title": "Rooftop Confrontation in Rain",
+      "description": "Aditya confronts Ramakant on a Mumbai rooftop during heavy monsoon rain. Both soaking wet. High-stakes dialogue scene with physical tension. Secrets fully revealed. Turning point in the story where Aditya must make a choice.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-16",
+        "time_of_day": "NIGHT",
+        "duration_hours": 4,
+        "estimated_shots": 16
+      },
+      "cast_required": ["actor_001", "actor_003"],
+      "equipment_required": ["eq_camera_001", "eq_grip_001", "eq_lighting_001", "eq_sound_001"],
+      "location_id": "loc_city_001",
+      "dependencies": "sc_009 leads directly to this",
+      "contingency": "Can be done on studio rooftop set if weather dangerous"
+    },
+    {
+      "scene_id": "sc_011",
+      "scene_number": 11,
+      "scene_title": "Studio - Interrogation Room Interior",
+      "description": "Official interrogation of Aditya at police station. Fluorescent lighting, bland walls. Ramakant and another officer question him about his crimes. Close-up dialogue scene heavy on acting performance. Claustrophobic tension.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-18",
+        "time_of_day": "DAY",
+        "duration_hours": 4,
+        "estimated_shots": 14
+      },
+      "cast_required": ["actor_001", "actor_003"],
+      "equipment_required": ["eq_camera_002", "eq_sound_001"],
+      "location_id": "loc_police_001",
+      "dependencies": "sc_010 leads to his capture",
+      "contingency": "None - interior scene, fully controlled"
+    },
+    {
+      "scene_id": "sc_012",
+      "scene_number": 12,
+      "scene_title": "Night - Farm Memories Montage",
+      "description": "Montage of memories from the farm set to instrumental music. Quick cuts between Aditya and Priya's moments together. Bittersweet, reflective. Used during interrogation as Aditya recalls his past. Emotional anchor for audience.",
+      "story_significance": "MEDIUM",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-19",
+        "time_of_day": "NIGHT",
+        "duration_hours": 2,
+        "estimated_shots": 8
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_lighting_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "Uses footage from previous farm scenes",
+      "contingency": "Can be created entirely in post-production if needed"
+    },
+    {
+      "scene_id": "sc_013",
+      "scene_number": 13,
+      "scene_title": "Studio - Prison Cell Interior",
+      "description": "Aditya in prison cell after conviction. Sparse, gray, cold environment. He receives a letter from Priya. Emotional moment of redemption beginning. Intimate single-character scene focused on internal transformation.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-21",
+        "time_of_day": "DAY",
+        "duration_hours": 3,
+        "estimated_shots": 10
+      },
+      "cast_required": ["actor_001"],
+      "equipment_required": ["eq_camera_002"],
+      "location_id": "loc_studio_001",
+      "dependencies": "sc_011 establishes his imprisonment",
+      "contingency": "None - fully interior controlled environment"
+    },
+    {
+      "scene_id": "sc_014",
+      "scene_number": 14,
+      "scene_title": "Police Station - Final Questioning",
+      "description": "Ramakant returns to question Aditya one final time. Roles have shifted - Aditya now speaks with clarity and peace. Reveals the truth about the original crime. Redemptive dialogue. Both men find closure.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-23",
+        "time_of_day": "AFTERNOON",
+        "duration_hours": 3,
+        "estimated_shots": 12
+      },
+      "cast_required": ["actor_001", "actor_003"],
+      "equipment_required": ["eq_camera_002", "eq_sound_001"],
+      "location_id": "loc_police_001",
+      "dependencies": "sc_013 shows his transformation",
+      "contingency": "None - interior practical location"
+    },
+    {
+      "scene_id": "sc_015",
+      "scene_number": 15,
+      "scene_title": "Release Day - Aditya Leaves Prison",
+      "description": "Years later. Aditya is released from prison. He walks out into sunlight (monsoon season has ended, now sunny). Priya waits for him outside. Their eyes meet. Physical and emotional reunion after years of separation. Shot at real beach location.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-25",
+        "time_of_day": "MORNING",
+        "duration_hours": 3,
+        "estimated_shots": 10
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_sound_001", "eq_drone_001"],
+      "location_id": "loc_beach_001",
+      "dependencies": "sc_014 leads to release",
+      "contingency": "Can be shot at studio if location unavailable"
+    },
+    {
+      "scene_id": "sc_016",
+      "scene_number": 16,
+      "scene_title": "Night - Reunion Dialogue",
+      "description": "Nighttime scene. Aditya and Priya sit on the beach under stars. Long, intimate conversation about second chances and redemption. They discuss their future together. Dialogue-heavy, emotionally charged, and hopeful.",
+      "story_significance": "CRITICAL",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-26",
+        "time_of_day": "NIGHT",
+        "duration_hours": 4,
+        "estimated_shots": 14
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_lighting_001", "eq_sound_001"],
+      "location_id": "loc_beach_001",
+      "dependencies": "sc_015 leads directly to this",
+      "contingency": "Can be shot on studio beach set if weather bad"
+    },
+    {
+      "scene_id": "sc_017",
+      "scene_number": 17,
+      "scene_title": "Rooftop - Sister's Forgiveness",
+      "description": "Aditya meets his estranged sister Meera (supporting character) on a Mumbai rooftop apartment. Emotional confrontation about past wrongs. She initially refuses forgiveness, then softens. Family reconciliation subplot resolves.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-28",
+        "time_of_day": "AFTERNOON",
+        "duration_hours": 3,
+        "estimated_shots": 11
+      },
+      "cast_required": ["actor_001", "actor_004"],
+      "equipment_required": ["eq_camera_001", "eq_sound_001"],
+      "location_id": "loc_city_001",
+      "dependencies": "sc_016 motivates his redemption journey",
+      "contingency": "Can be shot on studio rooftop"
+    },
+    {
+      "scene_id": "sc_018",
+      "scene_number": 18,
+      "scene_title": "Police Station - Closure",
+      "description": "Final scene at police station. Ramakant officially closes Aditya's case file. Symbolic gesture showing justice and closure. They shake hands as the monsoon season truly ends. Wind brings clear skies through the window.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-09-30",
+        "time_of_day": "MORNING",
+        "duration_hours": 2,
+        "estimated_shots": 8
+      },
+      "cast_required": ["actor_001", "actor_003"],
+      "equipment_required": ["eq_camera_002", "eq_sound_001"],
+      "location_id": "loc_police_001",
+      "dependencies": "sc_017 completes personal reconciliation",
+      "contingency": "None - interior practical location"
+    },
+    {
+      "scene_id": "sc_019",
+      "scene_number": 19,
+      "scene_title": "Farm - New Beginning",
+      "description": "Aditya returns to the sugar cane farm with Priya. They walk through fields together. Farm life begins anew. Symbolic return to where their journey restarted. Post-monsoon season. Golden light. Peaceful resolution.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-10-02",
+        "time_of_day": "SUNSET",
+        "duration_hours": 3,
+        "estimated_shots": 10
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_drone_001", "eq_sound_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_018 provides official closure",
+      "contingency": "Can substitute different rural location if needed"
+    },
+    {
+      "scene_id": "sc_020",
+      "scene_number": 20,
+      "scene_title": "Epilogue - Five Years Later",
+      "description": "Epilogue montage. Quick scenes of Aditya and Priya's life five years after release. They're married, running the farm successfully. Happiness and normalcy. Shows redemption achieved. Ends with sunrise over the farm.",
+      "story_significance": "HIGH",
+      "shooting_schedule": {
+        "shoot_date": "2026-10-04",
+        "time_of_day": "DAWN",
+        "duration_hours": 3,
+        "estimated_shots": 8
+      },
+      "cast_required": ["actor_001", "actor_002"],
+      "equipment_required": ["eq_camera_001", "eq_drone_001"],
+      "location_id": "loc_farm_001",
+      "dependencies": "sc_019 transitions to epilogue",
+      "contingency": "Can be shot entirely in studio if location unavailable"
+    }
+  ]
+}

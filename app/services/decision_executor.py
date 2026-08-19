@@ -11,6 +11,7 @@ Responsible for:
 from datetime import datetime, timezone
 from typing import Any
 
+from app.tools.format_compat import detect_format, _get_cast_ids, _get_equipment_ids
 from app.tools.production import get_scene_by_id, load_dataset
 
 
@@ -59,8 +60,9 @@ def execute_swap_decision(
     target_entry["date"] = original_source_date
     
     # Determine affected resources
-    affected_cast = source_scene.get("cast_ids", []) if source_scene else []
-    affected_equipment = source_scene.get("equipment_ids", []) if source_scene else []
+    is_new_fmt = (detect_format(dataset) == 'new')
+    affected_cast = _get_cast_ids(source_scene, is_new_fmt) if source_scene else []
+    affected_equipment = _get_equipment_ids(source_scene, is_new_fmt) if source_scene else []
     
     now = datetime.now(timezone.utc).isoformat()
     return {
@@ -140,8 +142,8 @@ def execute_reschedule_decision(
             "new_day": new_day_number
         },
         "affected_resources": {
-            "cast_count": len(scene.get("cast_ids", [])) if scene else 0,
-            "equipment_count": len(scene.get("equipment_ids", [])) if scene else 0
+            "cast_count": len(_get_cast_ids(scene, is_new_fmt)) if scene else 0,
+            "equipment_count": len(_get_equipment_ids(scene, is_new_fmt)) if scene else 0
         },
         "approval_info": {
             "approved_by": approved_by,

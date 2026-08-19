@@ -6,6 +6,7 @@ Now uses:
 - Unified Risk Engine (Base): Crisis classification
 - Cost Calculator (LAYER 2): Financial impact
 - Deterministic Resolver (LAYER 3): Actionable output
+- Format Compatibility: Works with both old and new dataset formats
 """
 
 from typing import Any
@@ -13,6 +14,7 @@ from typing import Any
 from app.tools.cost_calculator import calculate_disruption_cost
 from app.tools.deterministic_resolver import resolve_crisis_deterministically
 from app.tools.entity_extractor import extract_entities, find_affected_scenes
+from app.tools.format_compat import detect_format
 from app.tools.production import load_dataset
 from app.tools.unified_risk_engine import (
     detect_crisis_type,
@@ -21,15 +23,21 @@ from app.tools.unified_risk_engine import (
 )
 
 
-def evaluate_impact(scene_id: str, crisis_query: str) -> dict[str, Any]:
+def evaluate_impact(scene_id: str, crisis_query: str, project_data: dict[str, Any] = None) -> dict[str, Any]:
     """
     Autonomous impact assessment - works for ANY crisis type.
     
     Now uses LAYER 1 (Entity Extraction) to dynamically map unstructured input
     to database entities, then evaluates ALL affected scenes.
+    
+    Also supports both old format (data/) and new format (projects/)
     """
     
-    dataset = load_dataset("data")
+    # Use project_data if provided, otherwise load from data/
+    if project_data:
+        dataset = project_data
+    else:
+        dataset = load_dataset("data")
     
     # LAYER 1: Dynamic Entity Extraction
     # Maps unstructured crisis query to actual database IDs
@@ -76,15 +84,21 @@ def evaluate_impact(scene_id: str, crisis_query: str) -> dict[str, Any]:
     }
 
 
-def generate_recovery_options(scene_id: str, crisis_query: str) -> dict[str, Any]:
+def generate_recovery_options(scene_id: str, crisis_query: str, project_data: dict[str, Any] = None) -> dict[str, Any]:
     """
     Autonomous recovery planning - works for ANY crisis type.
     
     Now uses LAYER 3 (Deterministic Resolver) to output exact actions
     with cost analysis, not just recommendations.
+    
+    Also supports both old format (data/) and new format (projects/)
     """
     
-    dataset = load_dataset("data")
+    # Use project_data if provided, otherwise load from data/
+    if project_data:
+        dataset = project_data
+    else:
+        dataset = load_dataset("data")
     
     # Get crisis classification
     extraction = extract_entities(crisis_query, dataset)

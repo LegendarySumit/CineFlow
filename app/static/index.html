@@ -3,152 +3,418 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CineFlow | Production Crisis Director</title>
+    <title>CineFlow | Multi-Project Production Crisis Director</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body class="bg-[#0D0B18] text-slate-100 font-sans antialiased h-screen flex overflow-hidden">
 
-    <!-- LEFT SIDEBAR -->
+    <!-- SIDEBAR -->
     <aside class="w-72 bg-[#141024] border-r border-violet-900/30 flex flex-col overflow-hidden">
         <div class="flex-1 flex flex-col p-4 gap-4 overflow-hidden">
-            <!-- Brand Header -->
+            <!-- Brand -->
             <div class="flex items-center gap-3 px-2 py-3">
-                <div class="p-2.5 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-violet-900/50">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                    </svg>
+                <div class="p-2.5 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl text-white">
+                    <i data-lucide="film" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base text-white tracking-tight">CineFlow</h1>
-                    <p class="text-xs text-violet-400/70 font-mono">Crisis Director</p>
+                    <h1 class="font-bold text-base text-white">CineFlow</h1>
+                    <p class="text-xs text-violet-400/70 font-mono">Agent Director</p>
                 </div>
             </div>
 
-            <!-- New Crisis Button -->
-            <button onclick="createNewSession()" class="flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:from-violet-700 active:to-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-violet-900/40 transition-all duration-200">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>New Session</span>
+            <!-- Setup Project Button -->
+            <button onclick="openProjectSetupModal()" class="flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white rounded-xl font-medium shadow-lg shadow-orange-900/40">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                <span>Setup Project</span>
             </button>
 
-            <!-- Search -->
-            <div class="relative">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
-                <input id="session-search" type="text" placeholder="Search sessions..." class="w-full bg-[#1C1733] border border-violet-900/40 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50" />
+            <!-- Update Live Data Button -->
+            <button onclick="openLiveDataUpdateModal()" class="flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-medium shadow-lg shadow-emerald-900/40">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>Update Live Data</span>
+            </button>
+
+            <!-- Active Project -->
+            <div id="active-project-display" class="bg-violet-950/50 border border-violet-800/40 rounded-lg p-3 text-xs hidden">
+                <p class="text-slate-400 text-[11px]">Active Project</p>
+                <p id="project-name" class="font-semibold text-white text-sm mt-1">-</p>
+                <p id="project-meta" class="text-slate-500 text-[10px] mt-1">-</p>
             </div>
 
-            <!-- Sessions List -->
+            <!-- Projects List -->
             <div class="flex-1 overflow-hidden flex flex-col">
-                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2 py-2">History</span>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2 py-2">Projects</span>
+                <div id="projects-list" class="flex-1 overflow-y-auto pr-2 space-y-1.5">
+                    <p class="text-xs text-slate-500 px-2 py-3">No projects</p>
+                </div>
+            </div>
+
+            <!-- Sessions -->
+            <div class="flex-1 overflow-hidden flex flex-col mt-4 border-t border-violet-900/30 pt-3">
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-2 py-2">Sessions</span>
                 <div id="session-history-list" class="flex-1 overflow-y-auto pr-2 space-y-1.5">
-                    <!-- Sessions loaded dynamically -->
+                    <p class="text-xs text-slate-500 px-2 py-3">Load a project</p>
                 </div>
             </div>
         </div>
 
-        <!-- Production Context Footer -->
-        <div class="p-4 border-t border-violet-900/30 bg-[#100D1F] space-y-3">
-            <div class="text-xs space-y-1">
-                <p class="font-semibold text-slate-200">Project Aurora</p>
-                <p class="text-slate-400 text-[11px]">Day 7 • Aug 25, 2026</p>
-            </div>
-            <div class="flex items-center justify-between text-[10px]">
-                <span class="text-slate-500">Session ID</span>
-                <span id="session-id-display" class="font-mono text-violet-400 bg-violet-950/40 px-2 py-0.5 rounded">#init</span>
-            </div>
+        <!-- Footer -->
+        <div class="p-4 border-t border-violet-900/30 bg-[#100D1F] space-y-2 text-xs">
+            <div id="session-id-display" class="font-mono text-violet-400">Session: #init</div>
+            <div class="text-slate-500 text-[10px]">© CineFlow 2026</div>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 flex flex-col h-full bg-[#0D0B18] relative overflow-hidden">
+    <!-- MAIN -->
+    <main class="flex-1 flex flex-col h-full bg-[#0D0B18] overflow-hidden">
 
-        <!-- Top Status Bar -->
-        <header class="h-12 border-b border-violet-900/30 flex items-center justify-between px-6 bg-[#0D0B18]/80 backdrop-blur-sm flex-shrink-0">
+        <!-- Header -->
+        <header class="h-12 border-b border-violet-900/30 flex items-center justify-between px-6 bg-[#0D0B18]/80 flex-shrink-0">
             <div class="flex items-center gap-3">
+                <button onclick="toggleDashboardView()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-violet-700/40 hover:border-violet-500/60 text-xs font-medium text-slate-300 hover:text-slate-100 transition-colors">
+                    <i data-lucide="gauge" class="w-4 h-4"></i>
+                    <span id="view-toggle-text">Dashboard</span>
+                </button>
+                <div class="h-4 w-px bg-violet-900/30"></div>
                 <i data-lucide="bot" class="w-4 h-4 text-violet-400"></i>
                 <span class="text-sm font-semibold text-slate-200">CineFlow Executive Assistant</span>
             </div>
-            <div class="flex items-center gap-3 text-xs">
-                <div class="flex items-center gap-1.5 px-3 py-1.5 bg-violet-950/50 border border-violet-800/40 rounded-lg font-mono">
-                    <i data-lucide="trending-up" class="w-3 h-3 text-amber-400"></i>
-                    <span class="text-slate-400">Budget:</span>
-                    <span class="text-amber-400 font-semibold">₹12.5Cr</span>
-                </div>
+            <div id="budget-display" class="flex items-center gap-1.5 px-3 py-1.5 bg-violet-950/50 border border-violet-800/40 rounded-lg font-mono text-xs hidden">
+                <i data-lucide="trending-up" class="w-3 h-3 text-amber-400"></i>
+                <span class="text-slate-400">Budget:</span>
+                <span id="budget-amount" class="text-amber-400 font-semibold">-</span>
             </div>
         </header>
 
-        <!-- Chat Thread (Scrollable) -->
+        <!-- Chat -->
         <div id="chat-thread" class="flex-1 overflow-y-auto p-6 space-y-6 max-w-5xl mx-auto w-full">
-            <!-- Welcome Card -->
-            <div class="bg-[#161224] border border-violet-900/40 rounded-2xl p-6 shadow-lg space-y-3">
+            <div class="bg-[#161224] border border-violet-900/40 rounded-2xl p-6 shadow-lg">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 bg-violet-600/20 rounded-lg">
                         <i data-lucide="zap" class="w-5 h-5 text-violet-400"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold text-white text-base">Ready to Analyze Crises</h2>
-                        <p class="text-xs text-slate-400">Select scene, describe crisis, execute analysis</p>
+                        <h2 class="font-bold text-white text-base">Welcome to CineFlow</h2>
+                        <p class="text-xs text-slate-400">Click "Setup Project" to load your production data</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Input Dock (Floating) -->
-        <div class="p-6 max-w-5xl mx-auto w-full flex-shrink-0">
-            <div class="bg-[#161224] border border-violet-800/40 rounded-2xl p-4 shadow-2xl backdrop-blur-xl space-y-4">
+        <!-- Readiness Dashboard -->
+        <div id="readiness-dashboard" class="flex-1 overflow-y-auto p-6 hidden">
+            <div class="max-w-7xl mx-auto w-full space-y-6">
+                
+                <!-- Dashboard Header -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-1">Production Readiness</h2>
+                        <p class="text-sm text-slate-400">Real-time analysis of all scenes</p>
+                    </div>
+                    <button onclick="loadReadinessDashboard()" class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg font-medium text-sm">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
 
-                <!-- Scene & Templates Row -->
-                <div class="flex items-center gap-3 flex-wrap pb-3 border-b border-violet-900/30">
+                <!-- Overall Risk Summary -->
+                <div id="risk-summary" class="grid grid-cols-4 gap-4">
+                    <div class="bg-[#161224] border border-violet-900/40 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400">Overall Risk</span>
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <p id="overall-risk-badge" class="text-2xl font-bold text-amber-400">-</p>
+                    </div>
+                    <div class="bg-[#161224] border border-violet-900/40 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400">Total Scenes</span>
+                            <i data-lucide="film" class="w-4 h-4 text-violet-400"></i>
+                        </div>
+                        <p id="total-scenes" class="text-2xl font-bold text-slate-100">-</p>
+                    </div>
+                    <div class="bg-[#161224] border border-violet-900/40 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400">At Risk</span>
+                            <i data-lucide="zap" class="w-4 h-4 text-orange-400"></i>
+                        </div>
+                        <p id="scenes-at-risk" class="text-2xl font-bold text-orange-400">-</p>
+                    </div>
+                    <div class="bg-[#161224] border border-violet-900/40 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400">Conflicts</span>
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
+                        </div>
+                        <p id="critical-conflicts" class="text-2xl font-bold text-red-400">-</p>
+                    </div>
+                </div>
+
+                <!-- Recommended Actions -->
+                <div id="recommended-actions" class="bg-[#161224] border border-violet-900/40 rounded-xl p-5 hidden">
+                    <h3 class="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-4 h-4 text-emerald-400"></i>
+                        Recommended Actions
+                    </h3>
+                    <div id="actions-list" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Scenes Grid -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Scenes Overview</h3>
+                    <div id="scenes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Scene cards populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Dock -->
+        <div class="p-6 max-w-5xl mx-auto w-full flex-shrink-0 hidden" id="input-dock">
+            <div class="bg-[#161224] border border-violet-800/40 rounded-2xl p-4 shadow-2xl space-y-4">
+
+                <!-- Scene Selector -->
+                <div class="flex items-center gap-3 pb-3 border-b border-violet-900/30">
                     <div class="flex items-center gap-2">
                         <i data-lucide="film" class="w-4 h-4 text-violet-400"></i>
                         <select id="scene-selector" class="bg-[#1C1733] text-slate-200 border border-violet-900/50 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
-                            <option value="sc_42">sc_42: Reunion at High Tide</option>
-                            <option value="sc_18">sc_18: Night Highway Chase</option>
-                            <option value="sc_09">sc_09: Soundstage Interior</option>
-                            <option value="sc_25">sc_25: Police Interrogation</option>
-                            <option value="sc_14">sc_14: Maya Solo Monologue</option>
+                            <option value="">Select a scene...</option>
                         </select>
-                    </div>
-
-                    <div class="flex items-center gap-2 overflow-x-auto">
-                        <span class="text-xs text-slate-400 whitespace-nowrap">Templates:</span>
-                        <button onclick="applyTemplate('Equipment Damaged')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Equipment</button>
-                        <button onclick="applyTemplate('Lead Actor Sick')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Actor</button>
-                        <button onclick="applyTemplate('Weather Alert')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Weather</button>
-                        <button onclick="applyTemplate('Location Blocked')" class="px-3 py-1.5 bg-[#221B3D] hover:bg-violet-900/40 border border-violet-800/30 rounded-lg text-slate-300 text-xs whitespace-nowrap">Location</button>
                     </div>
                 </div>
 
                 <!-- Crisis Input -->
-                <textarea id="crisis-input" rows="2" placeholder="Describe the crisis or constraints..." class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-xl p-3 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 resize-none placeholder-slate-500"></textarea>
+                <textarea id="crisis-input" rows="3" placeholder="Describe the crisis or production issue..." class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-xl p-3 focus:outline-none focus:border-violet-500 resize-none"></textarea>
 
-                <!-- Mode & Submit -->
+                <!-- Controls -->
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="text-xs text-slate-400">Mode:</span>
-                        <button id="btn-quick" onclick="setMode('quick')" class="mode-btn active px-3 py-1.5 rounded-lg border text-xs font-medium">Quick</button>
-                        <button id="btn-deep" onclick="setMode('deep')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs font-medium">Deep</button>
-                        <button id="btn-next" onclick="setMode('next_steps')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs font-medium">Next Steps</button>
+                        <button id="btn-quick" onclick="setMode('quick')" class="mode-btn active px-3 py-1.5 rounded-lg border text-xs">Quick</button>
+                        <button id="btn-deep" onclick="setMode('deep')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs">Deep</button>
+                        <button id="btn-next" onclick="setMode('next_steps')" class="mode-btn px-3 py-1.5 rounded-lg border text-xs">Next Steps</button>
                     </div>
-
-                    <button id="submit-btn" onclick="submitCrisis()" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:from-violet-700 active:to-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-violet-900/40 transition-all duration-200 text-sm">
+                    <button id="submit-btn" onclick="submitCrisis()" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl font-medium text-sm">
                         <i data-lucide="send" class="w-4 h-4"></i>
-                        <span>Analyze Crisis</span>
+                        <span>Analyze</span>
                     </button>
                 </div>
 
             </div>
         </div>
-
     </main>
 
+    <!-- PROJECT SETUP MODAL -->
+    <div id="project-setup-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#161224] border border-violet-900/40 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            
+            <!-- Modal Header -->
+            <div class="sticky top-0 border-b border-violet-900/30 bg-[#161224] p-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Setup Film Production</h2>
+                    <p class="text-xs text-slate-400 mt-1">Upload production.json with your scenes, cast, equipment</p>
+                </div>
+                <button onclick="closeProjectSetupModal()" class="text-slate-400 hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-4">
+                
+                <!-- Upload Section -->
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 mb-2 block">Upload JSON File</label>
+                    <input type="file" accept=".json" onchange="handleProjectFileUpload(event)" class="w-full bg-[#0D0B18] text-slate-200 border border-violet-900/50 rounded-xl px-3 py-2 text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-violet-600 file:text-white">
+                </div>
+
+                <div class="text-center text-xs text-slate-400">OR</div>
+
+                <!-- Paste JSON Section -->
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 mb-2 block">Paste JSON Data</label>
+                    <textarea id="project-json-input" rows="6" placeholder='{"production_id": "proj_...", "name": "...", "scenes": [...], ...}' class="w-full bg-[#0D0B18] text-slate-200 border border-violet-900/50 rounded-xl p-3 text-xs font-mono focus:outline-none focus:border-violet-500 resize-none"></textarea>
+                    <button onclick="handleProjectJsonPaste()" class="mt-3 w-full py-2 px-4 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-medium">
+                        Create Project
+                    </button>
+                </div>
+
+                <!-- Example -->
+                <div class="bg-[#0D0B18] border border-violet-900/30 rounded-xl p-3">
+                    <p class="text-xs font-semibold text-slate-300 mb-2">Required Fields:</p>
+                    <code class="text-[9px] text-slate-400 block font-mono">production_id, name, scenes[], cast[], budget</code>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="/static/js/app.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initializeApp();
-        });
-    </script>
+    <script src="/static/js/projects.js"></script>
+</body>
+</html>
+
+
+    <!-- LIVE DATA UPDATE MODAL -->
+    <div id="live-data-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#161224] border border-violet-900/40 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            
+            <!-- Modal Header -->
+            <div class="sticky top-0 border-b border-violet-900/30 bg-[#161224] p-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Update Live Production Data</h2>
+                    <p class="text-xs text-slate-400 mt-1">Report changes: actor unavailable, equipment failure, location blocked, weather alerts</p>
+                </div>
+                <button onclick="closeLiveDataUpdateModal()" class="text-slate-400 hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6">
+                
+                <!-- Tab Navigation -->
+                <div class="flex items-center gap-2 border-b border-violet-900/30">
+                    <button onclick="switchLiveDataTab('manual')" id="tab-manual" class="px-4 py-2 text-sm font-medium text-slate-300 border-b-2 border-violet-500 hover:text-white">
+                        <i data-lucide="edit" class="w-3 h-3 inline mr-1"></i>
+                        Manual Override
+                    </button>
+                    <button onclick="switchLiveDataTab('upload')" id="tab-upload" class="px-4 py-2 text-sm font-medium text-slate-300 border-b-2 border-transparent hover:text-white">
+                        <i data-lucide="upload" class="w-3 h-3 inline mr-1"></i>
+                        Upload JSON
+                    </button>
+                    <button onclick="switchLiveDataTab('history')" id="tab-history" class="px-4 py-2 text-sm font-medium text-slate-300 border-b-2 border-transparent hover:text-white">
+                        <i data-lucide="history" class="w-3 h-3 inline mr-1"></i>
+                        History
+                    </button>
+                </div>
+
+                <!-- Manual Override Tab -->
+                <div id="panel-manual" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-2 block">Actor Status</label>
+                        <div class="space-y-2">
+                            <textarea id="unavailable-actors" placeholder="List unavailable actors (one per line)&#10;e.g., Arjun Kapoor&#10;e.g., Maya Sen" class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-lg px-3 py-2 focus:outline-none focus:border-violet-500 resize-none h-20"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-2 block">Equipment Issues</label>
+                        <textarea id="unavailable-equipment" placeholder="List unavailable equipment (one per line)&#10;e.g., DJI Inspire 3 Drone Kit" class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-lg px-3 py-2 focus:outline-none focus:border-violet-500 resize-none h-20"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-2 block">Location Access Issues</label>
+                        <textarea id="inaccessible-locations" placeholder="List inaccessible locations (one per line)&#10;e.g., Puri Beach" class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-lg px-3 py-2 focus:outline-none focus:border-violet-500 resize-none h-20"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-2 block">Notes</label>
+                        <textarea id="update-notes" placeholder="Reason for this update..." class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-lg px-3 py-2 focus:outline-none focus:border-violet-500 resize-none h-16"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-2">
+                        <button onclick="submitLiveDataUpdate()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium text-sm">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Detect Changes</span>
+                        </button>
+                        <button onclick="closeLiveDataUpdateModal()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload JSON Tab -->
+                <div id="panel-upload" class="space-y-4 hidden">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-2 block">Paste Updated production.json</label>
+                        <textarea id="json-upload" placeholder='{"production": {...}}' class="w-full bg-[#0D0B18] text-slate-200 text-sm border border-violet-900/50 rounded-lg px-3 py-2 focus:outline-none focus:border-violet-500 resize-none font-mono h-32"></textarea>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="submitJSONUpload()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium text-sm">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Parse & Detect Changes</span>
+                        </button>
+                        <button onclick="closeLiveDataUpdateModal()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="panel-history" class="space-y-4 hidden max-h-96 overflow-y-auto">
+                    <p id="history-empty" class="text-xs text-slate-400">No update history yet.</p>
+                    <div id="history-list" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- CHANGE APPROVAL MODAL -->
+    <div id="change-approval-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-[#161224] border border-violet-900/40 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            
+            <!-- Modal Header -->
+            <div class="sticky top-0 border-b border-violet-900/30 bg-[#161224] p-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Review Production Changes</h2>
+                    <p class="text-xs text-slate-400 mt-1">Approve or reject the detected changes</p>
+                </div>
+                <button onclick="closeChangeApprovalModal()" class="text-slate-400 hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6">
+                
+                <!-- Changes Summary -->
+                <div id="changes-summary" class="bg-[#0D0B18] border border-violet-900/30 rounded-xl p-4 space-y-2">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Affected Scenes -->
+                <div>
+                    <h3 class="text-sm font-semibold text-white mb-3">Affected Scenes</h3>
+                    <div id="affected-scenes-list" class="space-y-2 max-h-48 overflow-y-auto">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Risk Assessment -->
+                <div id="risk-assessment" class="bg-orange-900/20 border border-orange-600/30 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-semibold text-orange-300 mb-1">Risk Assessment</h4>
+                            <p id="risk-details" class="text-xs text-orange-100">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 pt-4 border-t border-violet-900/30">
+                    <button onclick="approveProductionChanges()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium text-sm">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Approve Changes</span>
+                    </button>
+                    <button onclick="rejectProductionChanges()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/40 hover:bg-red-600/60 text-red-200 rounded-lg font-medium text-sm border border-red-600/30">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                        <span>Reject Changes</span>
+                    </button>
+                    <button onclick="closeChangeApprovalModal()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

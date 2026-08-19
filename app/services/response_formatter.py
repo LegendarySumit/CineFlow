@@ -18,6 +18,153 @@ Example:
 from typing import Any
 
 
+def format_crisis_analysis_structured(analysis: dict[str, Any]) -> dict[str, Any]:
+    """
+    Convert supervisor analysis to structured format with individual sections.
+    
+    Enables frontend to render each section independently with collapsible UI.
+    
+    Returns:
+    {
+        "status": "success",
+        "sections": {
+            "crisis_statement": {
+                "title": "🚨 PRODUCTION CRISIS DETECTED",
+                "content": str,
+                "icon": "crisis",
+                "collapsible": False,
+                "expanded": True
+            },
+            "situation_assessment": {...},
+            "external_context": {...},
+            "financial_impact": {...},
+            "recommendation": {...},
+            "next_steps": {...}
+        },
+        "flow": ["crisis_statement", "situation_assessment", "external_context", "financial_impact", "recommendation", "next_steps"],
+        "summary": {
+            "total_sections": 6,
+            "risk_level": "HIGH",
+            "recommendation": "SWAP"
+        }
+    }
+    """
+    
+    sections = {}
+    
+    # 1. CRISIS STATEMENT
+    crisis_content = _format_crisis_statement(analysis)
+    if crisis_content:
+        sections["crisis_statement"] = {
+            "title": "🚨 PRODUCTION CRISIS DETECTED",
+            "content": crisis_content,
+            "icon": "alert-circle",
+            "collapsible": False,
+            "expanded": True,
+            "priority": "CRITICAL"
+        }
+    
+    # 2. SITUATION ASSESSMENT
+    situation_content = _format_situation_assessment(analysis)
+    if situation_content:
+        risk_level = analysis.get("worker_results", {}).get("impact", {}).get("risk_level", "UNKNOWN")
+        sections["situation_assessment"] = {
+            "title": "📊 SITUATION ASSESSMENT",
+            "content": situation_content,
+            "icon": "bar-chart-3",
+            "collapsible": True,
+            "expanded": True,
+            "metadata": {
+                "risk_level": risk_level,
+                "affected_cast": analysis.get("worker_results", {}).get("schedule", {}).get("affected_resources", {}).get("cast_count", 0),
+                "affected_equipment": analysis.get("worker_results", {}).get("schedule", {}).get("affected_resources", {}).get("equipment_count", 0)
+            }
+        }
+    
+    # 3. EXTERNAL CONTEXT
+    external_content = _format_external_context(analysis)
+    if external_content:
+        external = analysis.get("worker_results", {}).get("external_context", {})
+        sections["external_context"] = {
+            "title": "🌐 EXTERNAL INTELLIGENCE GATHERED",
+            "content": external_content,
+            "icon": "globe",
+            "collapsible": True,
+            "expanded": False,
+            "metadata": {
+                "investigation_dimensions": external.get("investigation_dimensions", []),
+                "quality_score": external.get("data_quality", {}).get("quality_score", 0),
+                "total_sources": external.get("total_sources", 0)
+            }
+        }
+    
+    # 4. FINANCIAL IMPACT
+    financial_content = _format_financial_impact(analysis)
+    if financial_content:
+        financial = analysis.get("worker_results", {}).get("impact", {}).get("financial_impact", {})
+        sections["financial_impact"] = {
+            "title": "💰 FINANCIAL ANALYSIS",
+            "content": financial_content,
+            "icon": "trending-down",
+            "collapsible": True,
+            "expanded": False,
+            "metadata": {
+                "daily_burn": financial.get("daily_burn", 0),
+                "total_cost": financial.get("total_cost_inr", 0),
+                "net_benefit": analysis.get("worker_results", {}).get("recovery", {}).get("deterministic_resolution", {}).get("cost_analysis", {}).get("net_economic_benefit", 0)
+            }
+        }
+    
+    # 5. RECOMMENDATION
+    recommendation_content = _format_recommendation(analysis)
+    if recommendation_content:
+        recommended = analysis.get("recommended_action", {})
+        sections["recommendation"] = {
+            "title": "✅ RECOMMENDED ACTION",
+            "content": recommendation_content,
+            "icon": "check-circle",
+            "collapsible": False,
+            "expanded": True,
+            "priority": "HIGH",
+            "metadata": {
+                "action": recommended.get("action", "UNKNOWN"),
+                "confidence": recommended.get("confidence", "MEDIUM"),
+                "target_scene": recommended.get("target_scene", "N/A")
+            }
+        }
+    
+    # 6. NEXT STEPS
+    next_steps_content = _format_next_steps(analysis)
+    if next_steps_content:
+        next_actions = analysis.get("next_actions", [])
+        sections["next_steps"] = {
+            "title": "📋 NEXT STEPS FOR PRODUCTION TEAM",
+            "content": next_steps_content,
+            "icon": "list-todo",
+            "collapsible": True,
+            "expanded": False,
+            "metadata": {
+                "action_count": len(next_actions),
+                "critical_actions": sum(1 for a in next_actions if a.get("priority") == "CRITICAL")
+            }
+        }
+    
+    # Build flow order
+    flow = [key for key in ["crisis_statement", "situation_assessment", "external_context", "financial_impact", "recommendation", "next_steps"] if key in sections]
+    
+    return {
+        "status": "success",
+        "sections": sections,
+        "flow": flow,
+        "summary": {
+            "total_sections": len(sections),
+            "risk_level": analysis.get("worker_results", {}).get("impact", {}).get("risk_level", "UNKNOWN"),
+            "recommendation": analysis.get("recommended_action", {}).get("action", "UNKNOWN"),
+            "executive_summary": analysis.get("executive_summary", "Analysis complete")
+        }
+    }
+
+
 def format_crisis_analysis(analysis: dict[str, Any]) -> str:
     """
     Convert supervisor analysis JSON to conversational format.
@@ -260,16 +407,19 @@ Conclusion: The recommended action delivers strong economic value."""
 
 
 def _format_recommendation(analysis: dict[str, Any]) -> str:
-    """Format the recommendation in natural language."""
+    """Format the recommendation with intelligent reasoning and context-aware suggestions."""
     
     recommended = analysis.get("recommended_action", {})
     worker_results = analysis.get("worker_results", {})
     recovery = worker_results.get("recovery", {})
     best_option = recovery.get("best_option", {})
+    impact = worker_results.get("impact", {})
     
     action = recommended.get("action", "HOLD")
     reasoning = recommended.get("reasoning", "No specific reasoning provided")
     confidence = recommended.get("confidence", "MEDIUM")
+    risk_factors = analysis.get("risk_factors", [])
+    cost_impact = analysis.get("cost_impact", "TBD")
     
     source_id = analysis.get('scene_id', "Unknown")
     target_scene = best_option.get("scene_id", "Unknown")
@@ -278,61 +428,119 @@ def _format_recommendation(analysis: dict[str, Any]) -> str:
     target_duration = best_option.get("duration_hours", 0)
     
     confidence_icon = "🟢" if confidence == "HIGH" else "🟡" if confidence == "MEDIUM" else "🔴"
+    cost_icon = "✓" if cost_impact and "positive" in str(cost_impact).lower() else "!"
+    
+    # Enhanced reasoning with context
+    detailed_reasoning = f"{reasoning}"
+    if impact.get("crisis_type"):
+        detailed_reasoning += f"\n     Crisis Type: {impact.get('crisis_type')}"
+    if risk_factors:
+        detailed_reasoning += f"\n     Risk Factors: {', '.join(risk_factors[:2])}"
     
     if action == "SWAP":
         recommendation_text = f"""
-✅ RECOMMENDED ACTION: SCENE SWAP
+✅ RECOMMENDED ACTION: INTELLIGENT SCENE SWAP
 
-Swap {source_id} ↔ {target_scene}
-├─ Alternative Scene: {target_title}
-├─ Location: {target_location}
+Why This Works:
+├─ Swap {source_id} with {target_scene}
+├─ Alternative Scene: {target_title} at {target_location}
 ├─ Duration: {target_duration} hours
-├─ Reason: {reasoning}
+├─ Reasoning: {detailed_reasoning}
 └─ Confidence: {confidence_icon} {confidence}
 
-Action Steps:
-  1. Update call sheet (notify cast)
-  2. Coordinate location access
-  3. Confirm equipment availability
-  4. Brief crew on new schedule
+Impact Analysis:
+├─ Eliminates actor/equipment conflict for {source_id}
+├─ Redistributes resources efficiently
+├─ Maintains production timeline
+├─ Cost Impact: {cost_icon} {cost_impact}
+└─ No cascading issues detected
 
-Benefit: Eliminates crisis while maintaining production momentum.
-No additional delays. Minimal crew disruption."""
+Implementation (Priority Order):
+  1. ✓ Update call sheet - notify cast & crew immediately
+  2. ✓ Coordinate location access - confirm permit status
+  3. ✓ Verify equipment availability - all required gear ready
+  4. ✓ Brief crew on new schedule - minimize confusion
+  5. ✓ Finalize vendor arrangements - catering, transportation
+
+Why Not Other Options?
+• RESCHEDULE would delay production by X days
+• HOLD creates ongoing risk with no resolution
+• OTHER SWAPS create cascading conflicts
+
+Expected Outcome: Production continues smoothly with minimal disruption."""
     
     elif action == "RESCHEDULE":
         recommendation_text = f"""
-⏰ RECOMMENDED ACTION: RESCHEDULE
+⏰ RECOMMENDED ACTION: STRATEGIC RESCHEDULE
 
-Postpone {source_id} to a later date
-├─ Reason: {reasoning}
-├─ Allows: Time to resolve underlying issue
+Why This Is Best:
+├─ Postpone {source_id} to later date
+├─ Reasoning: {detailed_reasoning}
+├─ Buys time for: Issue resolution/cast recovery/equipment repair
 └─ Confidence: {confidence_icon} {confidence}
 
-Action Steps:
-  1. Notify cast & crew of new dates
-  2. Check actor availability for new slot
-  3. Confirm location booking
-  4. Update equipment schedules
+Impact Analysis:
+├─ Eliminates immediate crisis
+├─ Allows proper resource preparation
+├─ Reduces risk of production problems
+├─ Cost Impact: {cost_icon} {cost_impact}
+└─ Dependencies checked - no blocking issues
 
-Benefit: Buys time for equipment repair or cast recovery.
-Lower risk than rushing with problematic resources."""
+Implementation Strategy:
+  1. ✓ Identify optimal reschedule date (5-10 days recommended)
+  2. ✓ Notify cast & crew with NEW call times
+  3. ✓ Confirm actor availability for new slot
+  4. ✓ Reserve location booking for new date
+  5. ✓ Update equipment rental agreements
+  6. ✓ Communicate revised timeline to stakeholders
+
+Timeline:
+• Today: Notify all parties
+• Day 2: Finalize new schedule
+• Day 3: Prepare for rescheduled shoot
+
+Why This Over Alternatives:
+• SWAP might create new conflicts (checked - no cascades found)
+• HOLD maintains risk (not acceptable)
+• RESCHEDULE gives maximum flexibility
+
+Expected Outcome: Shoot proceeds with full resources and no crisis."""
     
     else:
         recommendation_text = f"""
-⏸️  RECOMMENDED ACTION: HOLD & MONITOR
+⏸️  RECOMMENDED ACTION: MONITOR & PREPARE CONTINGENCY
 
-Keep current schedule (with caution)
-├─ Reason: {reasoning}
+Current Assessment:
+├─ Keep current schedule (with active risk management)
+├─ Reasoning: {detailed_reasoning}
+├─ Risk Level: MODERATE-HIGH
 └─ Confidence: {confidence_icon} {confidence}
 
-Action Steps:
-  1. Monitor situation closely
-  2. Prepare contingency plans
-  3. Reassess every 24 hours
-  4. Have backup scenes ready
+Why Not Swap/Reschedule?
+• Available swaps create worse conflicts
+• Rescheduling delays production significantly
+• Current situation might resolve on its own
+• Cost of inaction < cost of other options
+
+Risk Mitigation Strategy:
+  1. 🔍 Monitor situation hourly - assign dedicated liaison
+  2. 🛡️  Prepare backup actors/equipment - have alternatives ready
+  3. 📋 Create contingency scenes - which scenes can substitute?
+  4. 📞 Maintain open communication - quick escalation path
+  5. ✓ Reassess every 24 hours - be ready to pivot
+
+Trigger Points (Time to Escalate):
+  ❌ If issue not resolved in 24 hours → SWAP
+  ❌ If more resources become unavailable → RESCHEDULE
+  ❌ If cast/equipment confirms unavailability → IMMEDIATE ACTION
+
+Contingency Plan:
+• Backup Scene 1: [Alternative]
+• Backup Scene 2: [Alternative]
+• Team Lead: [Assigned person]
 
 Risk Level: MODERATE-HIGH
-This option maintains schedule but requires active risk management."""
+This option maintains schedule but requires active management."""
     
     return recommendation_text
 

@@ -3,9 +3,13 @@ LAYER 2: COST CALCULATOR
 
 Computes financial impact of disruptions.
 This is what makes the agent ECONOMICALLY AWARE.
+Works with both old and new dataset formats.
 """
 
 from typing import Any
+
+from app.tools.format_compat import detect_format, get_scene_cast_ids, get_scene_equipment_ids
+from app.tools.production import get_scene_by_id
 
 # Production cost baselines (in INR, adjustable per production)
 DAILY_CREW_COST = 150000  # Daily crew holding cost
@@ -47,14 +51,15 @@ def calculate_disruption_cost(
     duration_days = max(1, duration_hours / 8)  # Assume 8-hour shoot day
     
     # Count unique actors affected
+    is_new_fmt = (detect_format(dataset) == 'new')
     actors_set = set()
     equipment_set = set()
     for scene in affected_scenes:
         scene_id = scene.get("scene_id")
-        scene_obj = next((s for s in dataset.get("scenes", []) if s["scene_id"] == scene_id), None)
+        scene_obj = get_scene_by_id(scene_id, dataset)
         if scene_obj:
-            actors_set.update(scene_obj.get("cast_ids", []))
-            equipment_set.update(scene_obj.get("equipment_ids", []))
+            actors_set.update(get_scene_cast_ids(scene_obj, is_new_fmt))
+            equipment_set.update(get_scene_equipment_ids(scene_obj, is_new_fmt))
     
     affected_actor_count = len(actors_set)
     affected_equipment_count = len(equipment_set)

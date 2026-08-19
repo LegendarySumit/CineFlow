@@ -20,7 +20,8 @@ This enables producers to choose based on their priorities.
 
 from typing import Any
 
-from app.tools.production import load_dataset
+from app.tools.format_compat import detect_format, get_scene_cast_ids, get_scene_equipment_ids
+from app.tools.production import load_dataset, get_scene_by_id
 
 
 def analyze_scenario_costs(
@@ -51,15 +52,16 @@ def analyze_scenario_costs(
     target_id = decision.get("target_scene_id")
     
     # Get scene details
-    source_scene = next((s for s in dataset.get("scenes", []) if s["scene_id"] == source_id), None)
-    target_scene = next((s for s in dataset.get("scenes", []) if s["scene_id"] == target_id), None)
+    source_scene = get_scene_by_id(source_id, dataset)
+    target_scene = get_scene_by_id(target_id, dataset)
     
     if not source_scene or not target_scene:
         return {}
     
     # Base metrics
-    source_cast_count = len(source_scene.get("cast_ids", []))
-    target_cast_count = len(target_scene.get("cast_ids", []))
+    is_new_fmt = (detect_format(dataset) == 'new')
+    source_cast_count = len(get_scene_cast_ids(source_scene, is_new_fmt))
+    target_cast_count = len(get_scene_cast_ids(target_scene, is_new_fmt))
     
     # Financial analysis
     daily_burn = 300000  # From test data
@@ -74,8 +76,13 @@ def analyze_scenario_costs(
     setup_hours = 1.0 + (source_cast_count * 0.3) + (target_cast_count * 0.3)
     
     # Risk score (0-1, lower is better)
-    cast_overlap = len(set(source_scene.get("cast_ids", [])) & set(target_scene.get("cast_ids", [])))
-    equipment_overlap = len(set(source_scene.get("equipment_ids", [])) & set(target_scene.get("equipment_ids", [])))
+    source_cast_set = set(get_scene_cast_ids(source_scene, is_new_fmt))
+    target_cast_set = set(get_scene_cast_ids(target_scene, is_new_fmt))
+    source_equipment_set = set(get_scene_equipment_ids(source_scene, is_new_fmt))
+    target_equipment_set = set(get_scene_equipment_ids(target_scene, is_new_fmt))
+    
+    cast_overlap = len(source_cast_set & target_cast_set)
+    equipment_overlap = len(source_equipment_set & target_equipment_set)
     location_same = source_scene.get("location_id") == target_scene.get("location_id")
     
     risk_score = 0.0
