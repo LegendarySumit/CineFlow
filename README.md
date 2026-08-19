@@ -560,6 +560,14 @@ Response:
 
 ---
 
+> [!NOTE]
+> **Deployment Architecture Note:**
+> Due to cloud account billing verification constraints preventing Google Cloud Run URL deployment (`.run.app`), **CineFlow** is deployed and hosted on **Render.com**. The backend API is fully active and executing live Gemini reasoning calls.
+>
+> - **Live Host URL:** `https://cineflow-api-m7bu.onrender.com`
+> - **Health Status Check:** `https://cineflow-api-m7bu.onrender.com/api/health`
+> - **Interactive Swagger Docs:** `https://cineflow-api-m7bu.onrender.com/docs`
+
 ## 📄 License
 
 MIT License — Feel free to use in your own projects.
