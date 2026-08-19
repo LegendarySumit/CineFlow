@@ -4,6 +4,10 @@
 .env.*.local
 .env.production
 
+# UI Folders (no longer used)
+app/templates/
+app/static/
+
 # IDE & Editor
 .vscode/
 .idea/
