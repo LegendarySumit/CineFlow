@@ -104,8 +104,14 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-# Load default dataset
-DATASET = load_dataset("data")
+# Load default dataset from projects folder
+import json as json_module
+try:
+    project_path = Path(__file__).parent.parent / "projects" / "prod_monsoon_arc_01.json"
+    with open(project_path) as f:
+        DATASET = json_module.load(f)
+except:
+    DATASET = {}
 
 # Global reference to active project data (if loaded via API)
 ACTIVE_PROJECT_DATA = None
